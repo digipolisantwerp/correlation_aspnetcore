@@ -33,11 +33,11 @@ namespace SampleApi1
         {
             services.AddCorrelation();
 
-            //We add a single service agent with a delegate that sets the correlation on the http request.
+            //Add a single service agent with a delegate that sets the correlation on the http client.
             services.AddSingleServiceAgent<SampleApi2Agent>(settings =>
             {
                 settings.Scheme = HttpSchema.Http;
-                settings.Host = "localhost.fiddler";
+                settings.Host = "localhost";
                 settings.Port = "5001";
                 settings.Path = "api/";
             }, (serviceProvider, client) => client.SetCorrelationValues(serviceProvider));
