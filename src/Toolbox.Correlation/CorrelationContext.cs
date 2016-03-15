@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNet.Http;
+﻿using System;
 using Microsoft.Extensions.OptionsModel;
-using System;
 
 namespace Toolbox.Correlation
 {
@@ -10,25 +9,30 @@ namespace Toolbox.Correlation
 
         public CorrelationContext(IOptions<CorrelationOptions> options)
         {
-            if (options.Value == null) throw new ArgumentNullException(nameof(CorrelationOptions), $"{nameof(CorrelationOptions)} cannot be null.");
+            if ( options.Value == null ) throw new ArgumentNullException(nameof(CorrelationOptions), $"{nameof(CorrelationOptions)} cannot be null.");
 
             _options = options.Value;
 
-            IdHeaderKey = _options.IdHeaderKey;
-            SourceHeaderKey = _options.SourceHeaderKey;
+            HeaderKey = _options.HeaderKey;
         }
 
-        public string CorrelationId { get; private set; }
-        public string CorrelationSource { get; private set; }
-        public string IdHeaderKey { get; private set; } 
-        public string SourceHeaderKey { get; private set; }
+        public string Id { get; private set; }
+        public string Source { get; private set; }
+        public string UserId { get; private set; }
+        public string IPAddress { get; private set; }
+        public string UserToken { get; private set; }
 
-        internal bool TrySetValues(string id, string source)
+        public string HeaderKey { get; private set; } 
+
+        internal bool TrySetValues(string id, string source, string userid = null, string ipaddress = null, string usertoken = null)
         {
-            if (String.IsNullOrWhiteSpace(CorrelationId))
+            if (String.IsNullOrWhiteSpace(Id))
             {
-                CorrelationId = id;
-                CorrelationSource = source;
+                Id = id;
+                Source = source;
+                UserId = userid;
+                IPAddress = ipaddress;
+                UserToken = usertoken;
                 return true;
             }
 

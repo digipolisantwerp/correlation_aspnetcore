@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNet.Http;
-using System;
+﻿using System;
 
 namespace Toolbox.Correlation
 {
     public interface ICorrelationContext
     {
-        string CorrelationId { get; }
-        string CorrelationSource { get; }
-        string IdHeaderKey { get; }
-        string SourceHeaderKey { get; }
+        string Id { get; }
+        string Source { get; }
+        string UserId { get; }
+        string IPAddress { get; }
+        string UserToken { get; }
+
+        string HeaderKey { get; }
     }
 }

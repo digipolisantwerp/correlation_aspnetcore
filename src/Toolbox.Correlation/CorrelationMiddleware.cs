@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.Primitives;
-using System;
-using System.Threading.Tasks;
 
 namespace Toolbox.Correlation
 {
@@ -25,26 +26,28 @@ namespace Toolbox.Correlation
             _logger = logger;
         }
 
-        public Task Invoke(HttpContext context)
+        public Task Invoke(HttpContext context, IOptions<CorrelationOptions> options)
         {
-            string correlationId = String.Empty;
-            string correlationSource = String.Empty;
+            var correlationId = String.Empty;
+            var correlationSource = String.Empty;
+            var userid = String.Empty;
+            var ipaddress = String.Empty;
+            var usertoken = String.Empty; 
 
             var correlationContext = context.RequestServices.GetService<ICorrelationContext>() as CorrelationContext;
-            var correlationIdHeader = context.Request.Headers[correlationContext.IdHeaderKey];
+            var correlationHeader = context.Request.Headers[options.Value.HeaderKey];
 
-            if (StringValues.IsNullOrEmpty(correlationIdHeader))
+            if (StringValues.IsNullOrEmpty(correlationHeader))
             {
                 correlationId =  Guid.NewGuid().ToString();
                 correlationSource = _source;
             }
             else
             {
-                correlationId = correlationIdHeader;
-                correlationSource = context.Request.Headers[correlationContext.SourceHeaderKey];
+                correlationId = correlationHeader;
             }
 
-            correlationContext.TrySetValues(correlationId.ToString(), correlationSource);
+            correlationContext.TrySetValues(correlationId.ToString(), correlationSource, userid, ipaddress, usertoken);
 
             _logger.LogInformation($"CorrelationId: {correlationId.ToString()}");
             _logger.LogInformation($"CorrelationSource: {correlationSource}");

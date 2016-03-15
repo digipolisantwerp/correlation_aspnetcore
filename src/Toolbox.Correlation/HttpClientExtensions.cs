@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Toolbox.Correlation
@@ -13,8 +10,7 @@ namespace Toolbox.Correlation
         {
             if (context == null) throw new NullReferenceException($"{nameof(context)} cannot be null.");
 
-            client.DefaultRequestHeaders.Add(context.IdHeaderKey, context.CorrelationId.ToString());
-            client.DefaultRequestHeaders.Add(context.SourceHeaderKey, context.CorrelationSource);
+            client.DefaultRequestHeaders.Add(context.HeaderKey, context.Id.ToString());
         }
 
         public static void SetCorrelationValues(this HttpClient client, IServiceProvider serviceProvider)

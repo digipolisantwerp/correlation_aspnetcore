@@ -21,7 +21,7 @@ To add the toolbox to a project, you add the package to the project.json :
 
 ``` json 
 "dependencies": {
-    "Toolbox.Correlation":  "1.0.0"
+    "Toolbox.Correlation":  "1.1.0"
  }
 ``` 
 
@@ -51,25 +51,17 @@ With custom options:
 ``` csharp
   service.AddCorrelation(options => 
   {
-     options.IdHeaderKey = "CustomIdHeaderKey",
-     options.SourceHeaderKey = "CustomSourceHeaderKey", 
+     options.HeaderKey = "CustomHeaderKey",
       
   });
 ```
 
-Following options can be set :
-
-Option              | Description                                                | Default
------------------- | ----------------------------------------------------------- | --------------------------------------
-IdHeaderKey              | The header key used for the correlation id value. | "D-Correlation-Id"
-SourceHeaderKey | The header key used for the correlation source value. | "D-Correlation-Source"  
-
 Then add the middleware to the appication in the **Configure** method in the **Startup** class:
 
 ``` csharp
-  app.UseCorrelation("SoureValue");
+  app.UseCorrelation("SourceValue");
 ```
-The argument in the **UseCorreltationId** method sets the value to be used as the correlation source in the case the correlation id is generated in the application.
+The argument in the **UseCorrelation** method sets the value to be used as the correlation source in the case the correlation id is generated in the application.
 
 Please note that the order in wich middleware is added is the order of execution of the middleware. Thus middleware in the pipeline previous to the correlationId middleware will not be able to use the correlationId values.
 

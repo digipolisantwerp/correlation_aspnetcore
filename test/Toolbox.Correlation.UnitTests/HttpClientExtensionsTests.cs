@@ -31,11 +31,8 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
 
             client.SetCorrelationValues(correlationContext);
 
-            Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey));
-            Assert.Equal(correlationContext.CorrelationId.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey).Value.Single());
-
-            Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey));
-            Assert.Equal(correlationContext.CorrelationSource.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey).Value.Single());
+            Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.HeaderKey));
+            Assert.Equal(correlationContext.Id.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.HeaderKey).Value.Single());
         }
 
         [Fact]
@@ -48,11 +45,8 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
 
             client.SetCorrelationValues(CreateServiceProvider(correlationContext, options));
 
-            Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey));
-            Assert.Equal(correlationContext.CorrelationId.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey).Value.Single());
-
-            Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey));
-            Assert.Equal(correlationContext.CorrelationSource.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey).Value.Single());
+            Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.HeaderKey));
+            Assert.Equal(correlationContext.Id.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.HeaderKey).Value.Single());
         }
 
         private IServiceProvider CreateServiceProvider(ICorrelationContext context, CorrelationOptions options = null)

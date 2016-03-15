@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Toolbox.Correlation;
 using Xunit;
 
 namespace Toolbox.Correlation.UnitTests.CorrelationId
@@ -14,8 +10,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
         {
             var options = new CorrelationOptions();
 
-            Assert.Equal(CorrelationHeaders.IdHeaderKey, options.IdHeaderKey);
-            Assert.Equal(CorrelationHeaders.SourceHeaderKey, options.SourceHeaderKey);
+            Assert.Equal(CorrelationHeaders.HeaderKey, options.HeaderKey);
         }
     }
 }

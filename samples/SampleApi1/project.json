@@ -25,7 +25,7 @@
   "frameworks": {
     "dnx451": {
       "dependencies": {
-        "Toolbox.Correlation": "1.0.0",
+        "Toolbox.Correlation": "",
         "Toolbox.ServiceAgents": "1.0.0"
       }
     }

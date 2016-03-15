@@ -21,7 +21,7 @@ namespace SampleApi2.Controllers
         [HttpGet]
         public object Get()
         {
-            return new { Value = $"Result form SampleApi2: CorrelationId = {_context.CorrelationId}, CorrelationSource = {_context.CorrelationSource}" };
+            return new { Value = $"Result form SampleApi2: CorrelationId = {_context.Id}, CorrelationSource = {_context.Source}" };
         }
     }
 }

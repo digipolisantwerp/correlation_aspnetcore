@@ -27,8 +27,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
 
             var context = new CorrelationContext(Options.Create(options));
 
-            Assert.Equal(options.IdHeaderKey, context.IdHeaderKey);
-            Assert.Equal(options.SourceHeaderKey, context.SourceHeaderKey);
+            Assert.Equal(options.HeaderKey, context.HeaderKey);
         }
 
         [Fact]
@@ -38,12 +37,18 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var context = new CorrelationContext(Options.Create(options));
             var correlationId = Guid.NewGuid().ToString();
             var correlationSource = "TestSource";
+            var userid = "userid";
+            var ipaddress = "ipaddress";
+            var usertoken = "usertoken";
 
-            var result = context.TrySetValues(correlationId, correlationSource);
+            var result = context.TrySetValues(correlationId, correlationSource, userid, ipaddress, usertoken);
 
             Assert.True(result);
-            Assert.Equal(correlationId, context.CorrelationId);
-            Assert.Equal(correlationSource, context.CorrelationSource);
+            Assert.Equal(correlationId, context.Id);
+            Assert.Equal(correlationSource, context.Source);
+            Assert.Equal(userid, context.UserId);
+            Assert.Equal(ipaddress, context.IPAddress);
+            Assert.Equal(usertoken, context.UserToken);
         }
 
         [Fact]
@@ -53,13 +58,19 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var context = new CorrelationContext(Options.Create(options));
             var correlationId = Guid.NewGuid().ToString();
             var correlationSource = "TestSource";
+            var userid = "userid";
+            var ipaddress = "ipaddress";
+            var usertoken = "usertoken";
 
-            context.TrySetValues(correlationId, correlationSource);
-            var result = context.TrySetValues(Guid.NewGuid().ToString(), "otherSource");
+            context.TrySetValues(correlationId, correlationSource, userid, ipaddress, usertoken);
+            var result = context.TrySetValues(Guid.NewGuid().ToString(), "otherSource", "otherUserid", "otherIPAddress", "otherUserToken");
 
             Assert.False(result);
-            Assert.Equal(correlationId, context.CorrelationId);
-            Assert.Equal(correlationSource, context.CorrelationSource);
+            Assert.Equal(correlationId, context.Id);
+            Assert.Equal(correlationSource, context.Source);
+            Assert.Equal(userid, context.UserId);
+            Assert.Equal(ipaddress, context.IPAddress);
+            Assert.Equal(usertoken, context.UserToken);
         }
     }
 }

@@ -61,9 +61,9 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
         public async void ThrowExceptionWhenCorrelationContextNotAvailable()
         {
             var requestDelegate = CreateRequestDelegate();
-             var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSource, CreateLogger(_loggedMessages));
+            var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSource, CreateLogger(_loggedMessages));
 
-            Exception x = await Assert.ThrowsAsync<ArgumentNullException>(() => middleware.Invoke(new DefaultHttpContext()));
+            Exception x = await Assert.ThrowsAsync<ArgumentNullException>(() => middleware.Invoke(new DefaultHttpContext(), Options.Create(new CorrelationOptions())));
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
 
              var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSource, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext);
+            await middleware.Invoke(httpContext, Options.Create(options));
 
             Assert.True(isInvoked);
         }
@@ -95,10 +95,10 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var requestDelegate = CreateRequestDelegate();
              var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSource, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext);
+            await middleware.Invoke(httpContext, Options.Create(options));
 
-            Assert.NotEqual(new Guid().ToString(), correlationContext.CorrelationId);
-            Assert.Equal(_applicationSource, correlationContext.CorrelationSource);
+            Assert.NotEqual(new Guid().ToString(), correlationContext.Id);
+            Assert.Equal(_applicationSource, correlationContext.Source);
         }
 
         [Fact]
@@ -110,16 +110,15 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var correlationContext = CreateContext(options);
 
             httpContext.RequestServices = CreateServiceProvider(correlationContext, options);
-            httpContext.Request.Headers.Add(options.IdHeaderKey, initialId.ToString());
-            httpContext.Request.Headers.Add(options.SourceHeaderKey, _externalSource);
+            httpContext.Request.Headers.Add(options.HeaderKey, initialId.ToString());
 
             var requestDelegate = CreateRequestDelegate();
              var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSource, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext);
+            await middleware.Invoke(httpContext, Options.Create(options));
 
-            Assert.Equal(initialId.ToString(), correlationContext.CorrelationId);
-            Assert.Equal(_externalSource, correlationContext.CorrelationSource);
+            Assert.Equal(initialId.ToString(), correlationContext.Id);
+            Assert.Equal(_externalSource, correlationContext.Source);
         }
 
         [Fact]
@@ -131,16 +130,15 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var correlationContext = CreateContext(options);
 
             httpContext.RequestServices = CreateServiceProvider(correlationContext, options);
-            httpContext.Request.Headers.Add(options.IdHeaderKey, initialId.ToString());
-            httpContext.Request.Headers.Add(options.SourceHeaderKey, _externalSource);
+            httpContext.Request.Headers.Add(options.HeaderKey, initialId.ToString());
 
             var requestDelegate = CreateRequestDelegate();
             var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSource, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext);
+            await middleware.Invoke(httpContext, Options.Create(options));
 
-            Assert.Equal(initialId.ToString(), correlationContext.CorrelationId);
-            Assert.Equal(_externalSource, correlationContext.CorrelationSource);
+            Assert.Equal(initialId.ToString(), correlationContext.Id);
+            Assert.Equal(_externalSource, correlationContext.Source);
         }
 
         [Fact]
@@ -152,13 +150,12 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var correlationContext = CreateContext(options);
 
             httpContext.RequestServices = CreateServiceProvider(correlationContext, options);
-            httpContext.Request.Headers.Add(options.IdHeaderKey, initialId.ToString());
-            httpContext.Request.Headers.Add(options.SourceHeaderKey, _externalSource);
+            httpContext.Request.Headers.Add(options.HeaderKey, initialId.ToString());
 
             var requestDelegate = CreateRequestDelegate();
             var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSource, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext);
+            await middleware.Invoke(httpContext, Options.Create(options));
 
             Assert.Equal(2, _loggedMessages.Count);
             Assert.Equal($"Information, CorrelationId: {initialId}", _loggedMessages[0]);

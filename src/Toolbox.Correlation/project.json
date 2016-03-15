@@ -1,7 +1,7 @@
 {
-	"version": "1.0.0",
-	"description": "Toolbox for correlation id's..",
-	"authors": [ "Digipolis.be" ],
+	"version": "1.1.0",
+	"description": "Toolbox for correlation id's.",
+	"authors": [ "digipolis.be" ],
 	"tags": [ "" ],
 	"projectUrl": "",
 	"licenseUrl": "",
