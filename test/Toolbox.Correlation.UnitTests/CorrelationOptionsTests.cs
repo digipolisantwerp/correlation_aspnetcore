@@ -10,7 +10,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
         {
             var options = new CorrelationOptions();
 
-            Assert.Equal(CorrelationHeaders.HeaderKey, options.HeaderKey);
+            Assert.Equal(CorrelationHeaderKeys.HeaderKey, options.HeaderKey);
         }
     }
 }

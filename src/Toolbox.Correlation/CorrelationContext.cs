@@ -18,18 +18,20 @@ namespace Toolbox.Correlation
 
         public string Id { get; private set; }
         public string Source { get; private set; }
+        public string Instance { get; private set; }
         public string UserId { get; private set; }
         public string IPAddress { get; private set; }
         public string UserToken { get; private set; }
 
         public string HeaderKey { get; private set; } 
 
-        internal bool TrySetValues(string id, string source, string userid = null, string ipaddress = null, string usertoken = null)
+        internal bool TrySetValues(string id, string source, string instance, string userid = null, string ipaddress = null, string usertoken = null)
         {
             if (String.IsNullOrWhiteSpace(Id))
             {
                 Id = id;
                 Source = source;
+                Instance = instance;
                 UserId = userid;
                 IPAddress = ipaddress;
                 UserToken = usertoken;

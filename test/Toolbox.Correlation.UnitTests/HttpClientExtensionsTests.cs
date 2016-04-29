@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.OptionsModel;
-using Moq;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
+using Microsoft.Extensions.OptionsModel;
+using Moq;
 using Toolbox.Correlation.UnitTests.Utilities;
 using Xunit;
 
@@ -27,7 +25,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var client = new HttpClient();
             var options = new CorrelationOptions();
             var correlationContext = new CorrelationContext(Options.Create(options));
-            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource");
+            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource", "TestInstance");
 
             client.SetCorrelationValues(correlationContext);
 
@@ -41,7 +39,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var client = new HttpClient();
             var options = new CorrelationOptions();
             var correlationContext = new CorrelationContext(Options.Create(options));
-            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource");
+            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource", "TestInstance");
 
             client.SetCorrelationValues(CreateServiceProvider(correlationContext, options));
 

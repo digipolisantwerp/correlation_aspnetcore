@@ -2,6 +2,6 @@
 {
     public class CorrelationOptions
     {
-        public string HeaderKey { get; set; } = CorrelationHeaders.HeaderKey;
+        public string HeaderKey { get; set; } = CorrelationHeaderKeys.HeaderKey;
     }
 }

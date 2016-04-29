@@ -6,6 +6,7 @@ namespace Toolbox.Correlation
     {
         string Id { get; }
         string Source { get; }
+        string Instance { get; }
         string UserId { get; }
         string IPAddress { get; }
         string UserToken { get; }

@@ -1,10 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OptionsModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Toolbox.Correlation;
 using Xunit;
 
 namespace Toolbox.Correlation.UnitTests.CorrelationIdServiceCollectionExtensions

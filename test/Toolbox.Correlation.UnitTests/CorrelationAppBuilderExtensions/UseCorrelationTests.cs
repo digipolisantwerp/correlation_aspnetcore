@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Builder.Internal;
-using Moq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Http.Features;
+using Moq;
 using Toolbox.Correlation;
 using Xunit;
-using Microsoft.AspNet.Http.Features;
 
 namespace Toolbox.Correlation.UnitTests.CorrelationIdAppBuilderExtensions
 {
@@ -17,10 +14,11 @@ namespace Toolbox.Correlation.UnitTests.CorrelationIdAppBuilderExtensions
         private void UseMiddlewareGetsCalled()
         {
             string source = "TestApp";
+            string instance = "TestInstance";
 
             var app = new ApplicationBuilderMock();
 
-            app.UseCorrelation(source);
+            app.UseCorrelation(source, instance);
 
             Assert.True(app.UseMethodGotCalled);
         }
