@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Moq;
 using Newtonsoft.Json;
+using Toolbox.Correlation.Middleware;
 using Toolbox.Correlation.UnitTests.Utilities;
 using Xunit;
 
@@ -20,7 +21,9 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
         private readonly string _applicationSourceName = "thisApplicationName";
         private readonly string _applicationInstanceId = "thisInstanceId";
         private readonly string _applicationInstanceName = "thisInstanceName";
+        private readonly ICorrelationHeaderValidator _mockedCorrelationHeaderValidator = CreateMockedCorrelationHeaderValidator();
         private List<string> _loggedMessages;
+        
 
         public CorrelationMiddlewareTests()
         {
@@ -144,7 +147,23 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var requestDelegate = CreateRequestDelegate();
             var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSourceId, _applicationSourceName, _applicationInstanceId, _applicationInstanceName, CreateLogger(_loggedMessages));
 
-            Exception x = await Assert.ThrowsAsync<ArgumentNullException>(() => middleware.Invoke(new DefaultHttpContext(), Options.Create(new CorrelationOptions())));
+            Exception x = await Assert.ThrowsAsync<ArgumentNullException>(() => middleware.Invoke(new DefaultHttpContext(), Options.Create(new CorrelationOptions()), _mockedCorrelationHeaderValidator));
+        }
+
+        [Fact]
+        private async Task ThrowExceptionWhenCorrelationHeaderValidatorIsNull()
+        {
+            var httpContext = new DefaultHttpContext();
+            var options = new CorrelationOptions();
+            var correlationContext = CreateContext(options);
+
+            httpContext.RequestServices = CreateServiceProvider(correlationContext, options);
+            var requestDelegate = CreateRequestDelegate();
+            var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSourceId, _applicationSourceName, _applicationInstanceId, _applicationInstanceName, CreateLogger(_loggedMessages));
+
+            var ex = await Assert.ThrowsAnyAsync<ArgumentNullException>(() => middleware.Invoke(httpContext, Options.Create(options), null));
+
+            Assert.Equal("correlationHeaderValidator", ex.ParamName);
         }
 
         [Fact]
@@ -160,7 +179,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
 
              var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSourceId, _applicationSourceName, _applicationInstanceId, _applicationInstanceName, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext, Options.Create(options));
+            await middleware.Invoke(httpContext, Options.Create(options), _mockedCorrelationHeaderValidator);
 
             Assert.True(isInvoked);
         }
@@ -176,7 +195,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var requestDelegate = CreateRequestDelegate();
              var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSourceId, _applicationSourceName, _applicationInstanceId, _applicationInstanceName, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext, Options.Create(options));
+            await middleware.Invoke(httpContext, Options.Create(options), _mockedCorrelationHeaderValidator);
 
             Assert.NotEqual(new Guid().ToString(), correlationContext.Id);
             Assert.Equal(_applicationSourceId, correlationContext.SourceId);
@@ -201,7 +220,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var requestDelegate = CreateRequestDelegate();
             var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSourceId, _applicationSourceName, _applicationInstanceId, _applicationInstanceName, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext, Options.Create(options));
+            await middleware.Invoke(httpContext, Options.Create(options), _mockedCorrelationHeaderValidator);
 
             Assert.Equal(correlationHeader.Id, correlationContext.Id);
             Assert.Equal(correlationHeader.SourceId, correlationContext.SourceId);
@@ -226,38 +245,58 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var requestDelegate = CreateRequestDelegate();
             var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSourceId, _applicationSourceName, _applicationInstanceId, _applicationInstanceName, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext, Options.Create(options));
+            await middleware.Invoke(httpContext, Options.Create(options), _mockedCorrelationHeaderValidator);
 
             Assert.Equal(400, httpContext.Response.StatusCode);
         }
 
-        //[Fact]
-        //private async Task ExtraPropertyIsIgnored()
-        //{
-        //    var headerString = "{\"Id\":\"anId\",\"Source\":\"aSource\",\"Instance2\":\"anInstance\",\"ExtraProperty\": \"aValue\"}";
-        //    var correlationHeaderBase64 = JsonToBase64(headerString);
+        [Fact]
+        private async Task ReturnsBadRequestWhenInvalidHeader()
+        {
+            var correlationHeaderJson = "{\"this\":\"is\",\"not\":\"a\",\"valid\":\"CorrelationHeader\"}";
+            var correlationHeaderBase64 = JsonToBase64(correlationHeaderJson);
 
-        //    var httpContext = new DefaultHttpContext();
-        //    var options = new CorrelationOptions();
-        //    var correlationContext = CreateContext(options);
+            var httpContext = new DefaultHttpContext();
+            var options = new CorrelationOptions();
+            var correlationContext = CreateContext(options);
 
-        //    httpContext.RequestServices = CreateServiceProvider(correlationContext, options);
-        //    httpContext.Request.Headers.Add(options.HeaderKey, correlationHeaderBase64);
+            httpContext.RequestServices = CreateServiceProvider(correlationContext, options);
+            httpContext.Request.Headers.Add(options.HeaderKey, correlationHeaderBase64);
 
-        //    var requestDelegate = CreateRequestDelegate();
-        //    var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSource, _applicationInstance, CreateLogger(_loggedMessages));
+            var requestDelegate = CreateRequestDelegate();
+            var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSourceId, _applicationSourceName, _applicationInstanceId, _applicationInstanceName, CreateLogger(_loggedMessages));
 
-        //    //var ex = await Assert.ThrowsAsync<FormatException>(() => middleware.Invoke(httpContext, Options.Create(options)));
+            var validator = new Mock<ICorrelationHeaderValidator>();
+            validator.Setup((v) => v.IsValid(It.IsAny<CorrelationHeader>())).Returns(false);
 
-        //    await middleware.Invoke(httpContext, Options.Create(options));
+            await middleware.Invoke(httpContext, Options.Create(options), validator.Object);
 
-        //    Assert.Equal("anId", correlationContext.Id);
-        //    //Assert.Equal(correlationHeader.Source, correlationContext.Source);
-        //    //Assert.Equal(correlationHeader.Instance, correlationContext.Instance);
-        //}
+            Assert.Equal(400, httpContext.Response.StatusCode);
+        }
 
         [Fact]
-        private async Task CorrelationValuesGetLogged()
+        private async Task ReturnsBadRequestWhenInvalidJson()
+        {
+            var correlationHeaderJson = "{\"this\"\"is\",\"not\":\"a\",,,\"valid\":\"json\"}";
+            var correlationHeaderBase64 = JsonToBase64(correlationHeaderJson);
+
+            var httpContext = new DefaultHttpContext();
+            var options = new CorrelationOptions();
+            var correlationContext = CreateContext(options);
+
+            httpContext.RequestServices = CreateServiceProvider(correlationContext, options);
+            httpContext.Request.Headers.Add(options.HeaderKey, correlationHeaderBase64);
+
+            var requestDelegate = CreateRequestDelegate();
+            var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSourceId, _applicationSourceName, _applicationInstanceId, _applicationInstanceName, CreateLogger(_loggedMessages));
+
+            await middleware.Invoke(httpContext, Options.Create(options), _mockedCorrelationHeaderValidator);
+
+            Assert.Equal(400, httpContext.Response.StatusCode);
+        }
+
+        [Fact]
+        private async Task CorrelationValuesAreLogged()
         {
             var correlationHeader = new CorrelationHeader() { Id = "anId", SourceId = "aSourceId", SourceName = "aSourceName", InstanceId = "anInstanceId", InstanceName = "anInstanceName" };
             var correlationHeaderBase64 = ToBase64(correlationHeader);
@@ -272,7 +311,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var requestDelegate = CreateRequestDelegate();
             var middleware = new CorrelationIdMiddleware(requestDelegate, _applicationSourceId, _applicationSourceName, _applicationInstanceId, _applicationInstanceName, CreateLogger(_loggedMessages));
 
-            await middleware.Invoke(httpContext, Options.Create(options));
+            await middleware.Invoke(httpContext, Options.Create(options), _mockedCorrelationHeaderValidator);
 
             Assert.Equal(4, _loggedMessages.Count);
             Assert.Equal($"Debug, CorrelationId: {correlationHeader.Id}", _loggedMessages[0]);
@@ -330,6 +369,13 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var bytes = Encoding.UTF8.GetBytes(jsonString);
             var base64 = Convert.ToBase64String(bytes);
             return base64;
+        }
+
+        private static ICorrelationHeaderValidator CreateMockedCorrelationHeaderValidator()
+        {
+            var validator = new Mock<ICorrelationHeaderValidator>();
+            validator.Setup(v => v.IsValid(It.IsAny<CorrelationHeader>())).Returns(true);
+            return validator.Object;
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
+using Toolbox.Correlation.Middleware;
 using Toolbox.Errors;
 
 namespace Toolbox.Correlation
@@ -38,8 +39,10 @@ namespace Toolbox.Correlation
             _logger = logger;
         }
 
-        public async Task Invoke(HttpContext context, IOptions<CorrelationOptions> options)
+        public async Task Invoke(HttpContext context, IOptions<CorrelationOptions> options, ICorrelationHeaderValidator correlationHeaderValidator)
         {
+            if ( correlationHeaderValidator == null ) throw new ArgumentNullException(nameof(correlationHeaderValidator), $"{nameof(correlationHeaderValidator)} cannot be null.");
+
             var correlationId = String.Empty;
             var correlationSourceId = String.Empty;
             var correlationSourceName = String.Empty;
@@ -68,11 +71,11 @@ namespace Toolbox.Correlation
                     var headerString = Encoding.UTF8.GetString(bytes);
                     var header = JsonConvert.DeserializeObject<CorrelationHeader>(headerString);
 
-                    // ToDo (SVB) : check if header was successfully deserialized
-
-                    // ==> FormatException opvangen en custom exception ?
-
-                    // Tests : not base64, not correlationheader object, missing properties, extra property
+                    if ( !correlationHeaderValidator.IsValid(header) )
+                    {
+                        await WriteError(context.Response, "Invalid Correlation header.");
+                        return;
+                    }
 
                     correlationId = header.Id ?? String.Empty;
                     correlationSourceId = header.SourceId ?? String.Empty;
@@ -83,13 +86,14 @@ namespace Toolbox.Correlation
                     ipaddress = header.IPAddress ?? String.Empty;
                     usertoken = header.UserToken ?? String.Empty;
                 }
-                catch ( FormatException ex )
+                catch ( FormatException formatEx )
                 {
-                    context.Response.StatusCode = 400;
-                    var error = new Error();
-                    error.AddMessage("CorrelationHeader", $"Invalid Correlation header ({ex.Message})");   // ToDo (SVB) : testen
-                    var jsonString = JsonConvert.SerializeObject(error);
-                    await context.Response.WriteAsync(jsonString);
+                    await WriteError(context.Response, formatEx.Message);
+                    return;
+                }
+                catch ( JsonReaderException jsonEx )
+                {
+                    await WriteError(context.Response, jsonEx.Message);
                     return;
                 }
             }
@@ -102,6 +106,15 @@ namespace Toolbox.Correlation
             _logger.LogDebug($"CorrelationUser: {userid}");
 
             await _next.Invoke(context);
+        }
+
+        private async Task WriteError(HttpResponse response, string message)
+        {
+            response.StatusCode = 400;
+            var error = new Error();
+            error.AddMessage("CorrelationHeader", $"Invalid Correlation header ({message})");
+            var jsonString = JsonConvert.SerializeObject(error);
+            await response.WriteAsync(jsonString);
         }
     }
 }
