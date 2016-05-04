@@ -10,7 +10,7 @@ namespace Toolbox.Correlation
         {
             if (context == null) throw new NullReferenceException($"{nameof(context)} cannot be null.");
 
-            client.DefaultRequestHeaders.Add(context.HeaderKey, context.Id.ToString());
+            client.DefaultRequestHeaders.Add(context.HeaderName, context.Id.ToString());
         }
 
         public static void SetCorrelationValues(this HttpClient client, IServiceProvider serviceProvider)

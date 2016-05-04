@@ -49,7 +49,7 @@ namespace SampleApi2
 
             app.UseIISPlatformHandler();
 
-            app.UseCorrelation("SampleApi2");
+            app.UseCorrelation("SampleApi2", "SampleApi2-instance1");
 
             app.UseMvc();
         }

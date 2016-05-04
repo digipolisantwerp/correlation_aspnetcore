@@ -25,7 +25,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var client = new HttpClient();
             var options = new CorrelationOptions();
             var correlationContext = new CorrelationContext(Options.Create(options));
-            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource", "TestInstance");
+            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSourceId", "TestSourceName", "TestInstanceId", "TestInstanceName");
 
             client.SetCorrelationValues(correlationContext);
 
@@ -39,7 +39,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             var client = new HttpClient();
             var options = new CorrelationOptions();
             var correlationContext = new CorrelationContext(Options.Create(options));
-            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource", "TestInstance");
+            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSourceId", "TestSourceName", "TestInstanceId", "TestInstanceName");
 
             client.SetCorrelationValues(CreateServiceProvider(correlationContext, options));
 

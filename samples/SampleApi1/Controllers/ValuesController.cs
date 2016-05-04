@@ -26,7 +26,7 @@ namespace SampleApi1.Controllers
         [HttpGet]
         public string Get()
         {
-            return $"Result form SampleApi1: CorrelationId = {_context.Id.ToString()}, CorrelationSource = {_context.Source}";
+            return $"Result form SampleApi1: CorrelationId = {_context.Id.ToString()}, CorrelationSourceId = {_context.SourceId}";
         }
 
         // To pass the correlation when calling another api using an HttpClient.

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNet.Mvc;
 using Toolbox.Correlation;
 
 namespace SampleApi2.Controllers
@@ -21,7 +17,7 @@ namespace SampleApi2.Controllers
         [HttpGet]
         public object Get()
         {
-            return new { Value = $"Result form SampleApi2: CorrelationId = {_context.Id}, CorrelationSource = {_context.Source}" };
+            return new { Value = $"Result form SampleApi2: CorrelationId = {_context.Id}, CorrelationSourceId = {_context.SourceId}" };
         }
     }
 }

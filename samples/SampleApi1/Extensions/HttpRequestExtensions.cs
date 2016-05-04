@@ -7,7 +7,7 @@ namespace SampleApi1
     {
         public static void SetCorrelationValues(this HttpRequestMessage request, ICorrelationContext context)
         {
-            request.Headers.Add(context.HeaderKey, context.Id.ToString());
+            request.Headers.Add(context.HeaderName, context.Id.ToString());
         }
     }
 }
