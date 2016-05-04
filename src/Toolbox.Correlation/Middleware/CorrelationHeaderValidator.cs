@@ -6,7 +6,11 @@ namespace Toolbox.Correlation.Middleware
     {
         public bool IsValid(CorrelationHeader correlationHeader)
         {
-            throw new NotImplementedException();
+            return ( !String.IsNullOrWhiteSpace(correlationHeader.Id) &&
+                     !String.IsNullOrWhiteSpace(correlationHeader.SourceId) &&
+                     !String.IsNullOrWhiteSpace(correlationHeader.SourceName) &&
+                     !String.IsNullOrWhiteSpace(correlationHeader.InstanceId) &&
+                     !String.IsNullOrWhiteSpace(correlationHeader.InstanceName) );
         }
     }
 }
