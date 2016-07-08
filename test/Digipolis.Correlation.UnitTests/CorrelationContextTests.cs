@@ -35,14 +35,24 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
         {
             var options = new CorrelationOptions();
             var context = new CorrelationContext(Options.Create(options));
-            var correlationId = Guid.NewGuid().ToString();
-            var correlationSource = "TestSource";
+            var id = Guid.NewGuid().ToString();
+            var sourceId = Guid.NewGuid().ToString();
+            var sourceName = "appName";
+            var instanceId = Guid.NewGuid().ToString();
+            var instanceName = "appName-instanceName";
+            var userId = "userId";
+            var ipAddress = "194.25.76.122";
 
-            var result = context.TrySetValues(correlationId, correlationSource);
+            var result = context.TrySetValues(id, sourceId, sourceName, instanceId, instanceName, userId, ipAddress);
 
             Assert.True(result);
-            Assert.Equal(correlationId, context.CorrelationId);
-            Assert.Equal(correlationSource, context.CorrelationSource);
+            Assert.Equal(id, context.Id);
+            Assert.Equal(sourceId, context.SourceId);
+            Assert.Equal(sourceName, context.SourceName);
+            Assert.Equal(instanceId, context.InstanceId);
+            Assert.Equal(instanceName, context.InstanceName);
+            Assert.Equal(userId, context.UserId);
+            Assert.Equal(ipAddress, context.IpAddress);
         }
 
         [Fact]
@@ -50,15 +60,25 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
         {
             var options = new CorrelationOptions();
             var context = new CorrelationContext(Options.Create(options));
-            var correlationId = Guid.NewGuid().ToString();
-            var correlationSource = "TestSource";
+            var id = Guid.NewGuid().ToString();
+            var sourceId = Guid.NewGuid().ToString();
+            var sourceName = "appName";
+            var instanceId = Guid.NewGuid().ToString();
+            var instanceName = "appName-instanceName";
+            var userId = "userId";
+            var ipAddress = "194.25.76.122";
 
-            context.TrySetValues(correlationId, correlationSource);
-            var result = context.TrySetValues(Guid.NewGuid().ToString(), "otherSource");
+            context.TrySetValues(id, sourceId, sourceName, instanceId, instanceName, userId, ipAddress);
+            var result = context.TrySetValues(id, sourceId, "otherSoure", instanceId, instanceName, userId, ipAddress);
 
             Assert.False(result);
-            Assert.Equal(correlationId, context.CorrelationId);
-            Assert.Equal(correlationSource, context.CorrelationSource);
+            Assert.Equal(id, context.Id);
+            Assert.Equal(sourceId, context.SourceId);
+            Assert.Equal(sourceName, context.SourceName);
+            Assert.Equal(instanceId, context.InstanceId);
+            Assert.Equal(instanceName, context.InstanceName);
+            Assert.Equal(userId, context.UserId);
+            Assert.Equal(ipAddress, context.IpAddress);
         }
     }
 }

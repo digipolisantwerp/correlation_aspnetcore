@@ -11,21 +11,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Digipolis.Correlation.UnitTests.CorrelationIdAppBuilderExtensions
 {
-    public class UseCorrelationIdTests
-    {
-        [Fact]
-        private void UseMiddlewareGetsCalled()
-        {
-            string source = "TestApp";
-
-            var app = new ApplicationBuilderMock();
-
-            app.UseCorrelation(source);
-
-            Assert.True(app.UseMethodGotCalled);
-        }
-    }
-
     public class ApplicationBuilderMock : IApplicationBuilder
     {
         public bool UseMethodGotCalled { get; set; }

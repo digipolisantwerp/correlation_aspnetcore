@@ -13,8 +13,8 @@ namespace Digipolis.Correlation
         {
             if (context == null) throw new NullReferenceException($"{nameof(context)} cannot be null.");
 
-            client.DefaultRequestHeaders.Add(context.IdHeaderKey, context.CorrelationId.ToString());
-            client.DefaultRequestHeaders.Add(context.SourceHeaderKey, context.CorrelationSource);
+            client.DefaultRequestHeaders.Add(context.IdHeaderKey, context.Id.ToString());
+            client.DefaultRequestHeaders.Add(context.SourceHeaderKey, context.SourceId);
         }
 
         public static void SetCorrelationValues(this HttpClient client, IServiceProvider serviceProvider)

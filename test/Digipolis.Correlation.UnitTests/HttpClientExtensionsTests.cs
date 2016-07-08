@@ -27,15 +27,24 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var client = new HttpClient();
             var options = new CorrelationOptions();
             var correlationContext = new CorrelationContext(Utilities.Options.Create(options));
-            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource");
+
+            var id = Guid.NewGuid().ToString();
+            var sourceId = Guid.NewGuid().ToString();
+            var sourceName = "testSource";
+            var instanceId = Guid.NewGuid().ToString();
+            var instanceName = "testSource-instanceName";
+            var userId = "userId";
+            var ipAddress = "194.25.76.122";
+
+            correlationContext.TrySetValues(id, sourceId, sourceName, instanceId, instanceName, userId, ipAddress);
 
             client.SetCorrelationValues(correlationContext);
 
             Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey));
-            Assert.Equal(correlationContext.CorrelationId.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey).Value.Single());
+            Assert.Equal(correlationContext.Id, client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey).Value.Single());
 
             Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey));
-            Assert.Equal(correlationContext.CorrelationSource.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey).Value.Single());
+            Assert.Equal(correlationContext.SourceId.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey).Value.Single());
         }
 
         [Fact]
@@ -44,15 +53,24 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var client = new HttpClient();
             var options = new CorrelationOptions();
             var correlationContext = new CorrelationContext(Utilities.Options.Create(options));
-            correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource");
+
+            var id = Guid.NewGuid().ToString();
+            var sourceId = Guid.NewGuid().ToString();
+            var sourceName = "testSource";
+            var instanceId = Guid.NewGuid().ToString();
+            var instanceName = "testSource-instanceName";
+            var userId = "userId";
+            var ipAddress = "194.25.76.122";
+
+            correlationContext.TrySetValues(id, sourceId, sourceName, instanceId, instanceName, userId, ipAddress);
 
             client.SetCorrelationValues(CreateServiceProvider(correlationContext, options));
 
             Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey));
-            Assert.Equal(correlationContext.CorrelationId.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey).Value.Single());
+            Assert.Equal(correlationContext.Id.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.IdHeaderKey).Value.Single());
 
             Assert.NotNull(client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey));
-            Assert.Equal(correlationContext.CorrelationSource.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey).Value.Single());
+            Assert.Equal(correlationContext.SourceId.ToString(), client.DefaultRequestHeaders.Single(h => h.Key == options.SourceHeaderKey).Value.Single());
         }
 
         private IServiceProvider CreateServiceProvider(ICorrelationContext context, CorrelationOptions options = null)
