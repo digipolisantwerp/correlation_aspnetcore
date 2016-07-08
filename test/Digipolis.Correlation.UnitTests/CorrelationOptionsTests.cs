@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Toolbox.Correlation;
+using Digipolis.Correlation;
 using Xunit;
 
-namespace Toolbox.Correlation.UnitTests.CorrelationId
+namespace Digipolis.Correlation.UnitTests.CorrelationId
 {
     public class CorrelationOptionsTests
     {

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 
-namespace Toolbox.Correlation
+namespace Digipolis.Correlation
 {
     public static class CorrelationAppBuilderExtensions
     {

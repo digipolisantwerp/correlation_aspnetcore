@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "name": "Toolbox.Correlation",
+  "version": "2.0.0",
+  "name": "Digipolis.Correlation",
   "private": true,
   "devDependencies": {
     "gulp": "^3.9.0",

@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNet.Http.Features;
-using Microsoft.AspNet.Http.Features.Internal;
-using Microsoft.AspNet.Http.Internal;
+﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Toolbox.Correlation;
-using Toolbox.Correlation.UnitTests.Utilities;
+using Digipolis.Correlation;
+using Digipolis.Correlation.UnitTests.Utilities;
 using Xunit;
 
-namespace Toolbox.Correlation.UnitTests.CorrelationId
+namespace Digipolis.Correlation.UnitTests.CorrelationId
 {
     public class CorrelationContextTests
     {

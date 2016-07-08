@@ -1,19 +1,19 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Internal;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Toolbox.Correlation;
+using Digipolis.Correlation;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.OptionsModel;
-using Toolbox.Correlation.UnitTests.Utilities;
+using Microsoft.Extensions.Options;
+using Digipolis.Correlation.UnitTests.Utilities;
 using Microsoft.Extensions.Logging;
 
-namespace Toolbox.Correlation.UnitTests.CorrelationId
+namespace Digipolis.Correlation.UnitTests.CorrelationId
 {
     public class CorrelationMiddlewareTests
     {
@@ -167,7 +167,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
         
         private ICorrelationContext CreateContext(CorrelationOptions options)
         {
-            var context = new CorrelationContext(Options.Create(options));
+            var context = new CorrelationContext(Utilities.Options.Create(options));
             return context;
         }
 
@@ -177,7 +177,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             serviceProviderMock.Setup(p => p.GetService(typeof(ICorrelationContext))).Returns(context);
 
             if (options != null)
-                serviceProviderMock.Setup(p => p.GetService(typeof(IOptions<CorrelationOptions>))).Returns(Options.Create(options));
+                serviceProviderMock.Setup(p => p.GetService(typeof(IOptions<CorrelationOptions>))).Returns(Utilities.Options.Create(options));
 
             return serviceProviderMock.Object;
         }

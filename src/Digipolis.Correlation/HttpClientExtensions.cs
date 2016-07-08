@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Toolbox.Correlation
+namespace Digipolis.Correlation
 {
     public static class HttpClientExtensions
     {

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 
-namespace Toolbox.Correlation
+namespace Digipolis.Correlation
 {
     public interface ICorrelationContext
     {

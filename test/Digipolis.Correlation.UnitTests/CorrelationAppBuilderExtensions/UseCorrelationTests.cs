@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Builder.Internal;
+﻿using Microsoft.AspNetCore.Builder;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Toolbox.Correlation;
+using Digipolis.Correlation;
 using Xunit;
-using Microsoft.AspNet.Http.Features;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http;
 
-namespace Toolbox.Correlation.UnitTests.CorrelationIdAppBuilderExtensions
+namespace Digipolis.Correlation.UnitTests.CorrelationIdAppBuilderExtensions
 {
     public class UseCorrelationIdTests
     {

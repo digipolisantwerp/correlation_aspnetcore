@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Toolbox.Correlation;
+using Microsoft.AspNetCore.Mvc;
+using Digipolis.Correlation;
 using System.Net.Http;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using SampleApi1.ServiceAgents;
 
 namespace SampleApi1.Controllers

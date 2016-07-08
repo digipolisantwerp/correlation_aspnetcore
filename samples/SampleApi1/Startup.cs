@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -7,10 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Toolbox.ServiceAgents;
+using Digipolis.ServiceAgents;
 using SampleApi1.ServiceAgents;
-using Toolbox.ServiceAgents.Settings;
-using Toolbox.Correlation;
+using Digipolis.ServiceAgents.Settings;
+using Digipolis.Correlation;
+using System.IO;
 
 namespace SampleApi1
 {
@@ -20,10 +21,10 @@ namespace SampleApi1
         {
             // Set up configuration sources.
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json");
+                .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json"));
 
             builder.AddEnvironmentVariables();
-            Configuration = builder.Build().ReloadOnChanged("appsettings.json");
+            Configuration = builder.Build();
         }
 
         public IConfigurationRoot Configuration { get; set; }
@@ -48,16 +49,9 @@ namespace SampleApi1
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddDebug();
-
-            app.UseIISPlatformHandler();
-
             app.UseCorrelation("SampleApi1");
 
             app.UseMvc();
         }
-
-        // Entry point for the application.
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }

@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Toolbox.Correlation;
+using Digipolis.Correlation;
 using Xunit;
 
-namespace Toolbox.Correlation.UnitTests.CorrelationIdServiceCollectionExtensions
+namespace Digipolis.Correlation.UnitTests.CorrelationIdServiceCollectionExtensions
 {
     public class AddCorrelationIdTests
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Toolbox.Correlation
+namespace Digipolis.Correlation
 {
     public static class CorrelationServiceCollectionExtensions
     {

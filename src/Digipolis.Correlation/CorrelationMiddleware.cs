@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Threading.Tasks;
 
-namespace Toolbox.Correlation
+namespace Digipolis.Correlation
 {
-    internal class CorrelationIdMiddleware
+    public class CorrelationIdMiddleware
     {
         private ILogger<CorrelationIdMiddleware> _logger;
         private readonly RequestDelegate _next;

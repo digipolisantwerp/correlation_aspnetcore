@@ -1,4 +1,4 @@
-﻿namespace Toolbox.Correlation
+﻿namespace Digipolis.Correlation
 {
     public class CorrelationOptions
     {

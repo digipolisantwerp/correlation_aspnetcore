@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Toolbox.Correlation;
+using Microsoft.AspNetCore.Mvc;
+using Digipolis.Correlation;
 
 namespace SampleApi2.Controllers
 {

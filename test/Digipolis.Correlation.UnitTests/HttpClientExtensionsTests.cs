@@ -1,14 +1,14 @@
-﻿using Microsoft.Extensions.OptionsModel;
+﻿using Microsoft.Extensions.Options;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Toolbox.Correlation.UnitTests.Utilities;
+using Digipolis.Correlation.UnitTests.Utilities;
 using Xunit;
 
-namespace Toolbox.Correlation.UnitTests.CorrelationId
+namespace Digipolis.Correlation.UnitTests.CorrelationId
 {
     public class HttpClientExtensionsTests
     {
@@ -26,7 +26,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
         {
             var client = new HttpClient();
             var options = new CorrelationOptions();
-            var correlationContext = new CorrelationContext(Options.Create(options));
+            var correlationContext = new CorrelationContext(Utilities.Options.Create(options));
             correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource");
 
             client.SetCorrelationValues(correlationContext);
@@ -43,7 +43,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
         {
             var client = new HttpClient();
             var options = new CorrelationOptions();
-            var correlationContext = new CorrelationContext(Options.Create(options));
+            var correlationContext = new CorrelationContext(Utilities.Options.Create(options));
             correlationContext.TrySetValues(Guid.NewGuid().ToString(), "TestSource");
 
             client.SetCorrelationValues(CreateServiceProvider(correlationContext, options));
@@ -61,7 +61,7 @@ namespace Toolbox.Correlation.UnitTests.CorrelationId
             serviceProviderMock.Setup(p => p.GetService(typeof(ICorrelationContext))).Returns(context);
 
             if (options != null)
-                serviceProviderMock.Setup(p => p.GetService(typeof(IOptions<CorrelationOptions>))).Returns(Options.Create(options));
+                serviceProviderMock.Setup(p => p.GetService(typeof(IOptions<CorrelationOptions>))).Returns(Utilities.Options.Create(options));
 
             return serviceProviderMock.Object;
         }

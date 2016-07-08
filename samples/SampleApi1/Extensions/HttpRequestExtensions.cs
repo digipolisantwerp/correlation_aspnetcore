@@ -1,7 +1,6 @@
-﻿
-using Microsoft.AspNet.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Net.Http;
-using Toolbox.Correlation;
+using Digipolis.Correlation;
 
 namespace SampleApi1
 {

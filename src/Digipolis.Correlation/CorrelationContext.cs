@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNet.Http;
-using Microsoft.Extensions.OptionsModel;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using System;
 
-namespace Toolbox.Correlation
+namespace Digipolis.Correlation
 {
     public class CorrelationContext : ICorrelationContext
     {
@@ -16,14 +16,15 @@ namespace Toolbox.Correlation
 
             IdHeaderKey = _options.IdHeaderKey;
             SourceHeaderKey = _options.SourceHeaderKey;
+
         }
 
         public string CorrelationId { get; private set; }
         public string CorrelationSource { get; private set; }
-        public string IdHeaderKey { get; private set; } 
+        public string IdHeaderKey { get; private set; }
         public string SourceHeaderKey { get; private set; }
 
-        internal bool TrySetValues(string id, string source)
+        public bool TrySetValues(string id, string source)
         {
             if (String.IsNullOrWhiteSpace(CorrelationId))
             {

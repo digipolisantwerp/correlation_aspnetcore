@@ -21,7 +21,7 @@ To add the toolbox to a project, you add the package to the project.json :
 
 ``` json 
 "dependencies": {
-    "Toolbox.Correlation":  "1.0.0"
+    "Digipolis.Correlation":  "2.0.0"
  }
 ``` 
 
@@ -75,7 +75,7 @@ Please note that the order in wich middleware is added is the order of execution
 
 ## HttpClientExtensions
 
-In order to use the correlation values when calling another api you can use the **HttpClient** extension methods provided in this toolbox.
+In order to use the correlation values when calling another api you can use the **HttpClient** extension methods provided in this Digipolis.
 
 Two overloads are available. The first takes an **ICorrelationContext** as argument and sets the values on the headers.
 ``` csharp
@@ -95,7 +95,7 @@ Important notice is that it is assumed that the http client is a transient or sc
 
 ## Coupling with a Service Agent
 
-When using the correlation in conjunction with a service agent (form Toolbox.ServiceAgent) it is possible setup the coupling in the **ConfigureServices** method of the **Startup** class.
+When using the correlation in conjunction with a service agent (form Digipolis.ServiceAgent) it is possible setup the coupling in the **ConfigureServices** method of the **Startup** class.
 You can supply an action that gets invoked by the service agent toolbox when the service agent gets instantiated. On that action you can use the extension methods to setup the correlation usage.
 ``` csharp
     services.AddSingleServiceAgent<SampleApi2Agent>(settings =>
