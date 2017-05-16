@@ -1,11 +1,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DF48C692-7C29-C63F-8B3A-E5760301CF8F}"
 	ProjectSection(SolutionItems) = preProject
 		changelog.md = changelog.md
-		global.json = global.json
 		LICENSE.txt = LICENSE.txt
 		nuget.config = nuget.config
 		readme.md = readme.md
@@ -18,9 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4A4500C0-E6E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B124F75A-1567-A04F-81D5-33A01278CDC4}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Digipolis.Correlation", "src\Digipolis.Correlation\Digipolis.Correlation.xproj", "{074C2344-C13A-EC9F-5B7A-EB85AA504F2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digipolis.Correlation", "src\Digipolis.Correlation\Digipolis.Correlation.csproj", "{074C2344-C13A-EC9F-5B7A-EB85AA504F2B}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Digipolis.Correlation.UnitTests", "test\Digipolis.Correlation.UnitTests\Digipolis.Correlation.UnitTests.xproj", "{F555BE4D-1694-5FF3-B2A0-9B25F90AE8FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Digipolis.Correlation.UnitTests", "test\Digipolis.Correlation.UnitTests\Digipolis.Correlation.UnitTests.csproj", "{F555BE4D-1694-5FF3-B2A0-9B25F90AE8FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
