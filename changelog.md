@@ -1,5 +1,10 @@
 # Correlation Toolbox
 
+## 3.1.0
+
+- Added CorrelationMiddleware that uses the correlationheader to fill the correlationcontext
+- Updated the model and headerkeys used for the correlationheader
+
 ## 3.0.0
 
 - conversion to csproj and MSBuild.
