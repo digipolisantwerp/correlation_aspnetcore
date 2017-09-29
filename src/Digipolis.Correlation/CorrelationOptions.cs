@@ -11,6 +11,6 @@
         /// Routes that match this regex will never require a correlation header.
         /// By default the status routes /vx/status and /status will never require correlation.
         /// </summary>
-        public string CorrelationHeaderNotRequiredRouteRegex { get; set; } = "^(/v./(?i)(status)/|/(?i)(status))";
+        public string CorrelationHeaderNotRequiredRouteRegex { get; set; } = "^(/v./(?i)(status)/|/(?i)(status)/)";
     }
 }
