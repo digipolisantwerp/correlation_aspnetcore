@@ -7,9 +7,9 @@ namespace Digipolis.Correlation
 {
     public static class CorrelationAppBuilderExtensions
     {
-        public static IApplicationBuilder UseCorrelation(this IApplicationBuilder app, string source)
+        public static IApplicationBuilder UseCorrelation(this IApplicationBuilder app)
         {
-            app.UseMiddleware<CorrelationMiddleware>(source);
+            app.UseMiddleware<CorrelationMiddleware>();
 
             return app;
         }

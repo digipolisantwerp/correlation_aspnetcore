@@ -53,6 +53,27 @@ namespace Digipolis.Correlation.UnitTests
         }
 
         [Fact]
+        public void ThrowsNoValidationExceptionIfDgpHeaderRequired_Missing_AndMatches_CorrelationHeaderNotRequiredRouteRegex()
+        {
+            //Arrange
+            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
+            var applicationContext = new Moq.Mock<IApplicationContext>();
+            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, applicationContext: applicationContext.Object);
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
+            var correlationContext = new CorrelationContext(options);
+            var httpContext = new DefaultHttpContext();
+            httpContext.RequestServices = new Moq.Mock<IServiceProvider>().Object;
+            httpContext.Request.Path = "/v2/status/ping";
+
+            var serviceProvider = new Moq.Mock<IServiceProvider>();
+            serviceProvider.Setup((x) => x.GetService(typeof(ICorrelationContext))).Returns(correlationContext);
+            httpContext.RequestServices = serviceProvider.Object;
+
+            //Act
+            middleware.Invoke(httpContext, options);
+        }
+
+        [Fact]
         public void FillsCorrelationContextWithApplicationContextIfHeaderNotRequiredAndNotProvided()
         {
             //Arrange

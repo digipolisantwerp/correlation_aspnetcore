@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Digipolis.Correlation
@@ -35,7 +36,7 @@ namespace Digipolis.Correlation
             {
                 FillCorrelationContext(correlationHeader, correlationContext);
             }
-            else if (options.Value.CorrelationHeaderRequired)
+            else if (options.Value.CorrelationHeaderRequired && !Regex.IsMatch(context.Request.Path,options.Value.CorrelationHeaderNotRequiredRouteRegex))
             {
                 _logger.LogWarning("CorrelationHeader is required.");
                 var exception = new ValidationException("CorrelationHeader is required.", "REQCOR");
