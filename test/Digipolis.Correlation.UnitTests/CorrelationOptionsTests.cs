@@ -14,8 +14,7 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
         {
             var options = new CorrelationOptions();
 
-            Assert.Equal(CorrelationHeaders.IdHeaderKey, options.IdHeaderKey);
-            Assert.Equal(CorrelationHeaders.SourceHeaderKey, options.SourceHeaderKey);
+            Assert.Equal(false, options.CorrelationHeaderRequired);
         }
     }
 }

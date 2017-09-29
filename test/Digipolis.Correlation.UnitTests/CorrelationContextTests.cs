@@ -22,12 +22,14 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
         [Fact]
         private void SetHeaderKeysFromOptions()
         {
-            var options = new CorrelationOptions();
+            var options = new CorrelationOptions()
+            {
+                CorrelationHeaderRequired = true
+            };
 
             var context = new CorrelationContext(Options.Create(options));
 
-            Assert.Equal(options.IdHeaderKey, context.IdHeaderKey);
-            Assert.Equal(options.SourceHeaderKey, context.SourceHeaderKey);
+            Assert.Equal(options.CorrelationHeaderRequired, true);
         }
 
         [Fact]

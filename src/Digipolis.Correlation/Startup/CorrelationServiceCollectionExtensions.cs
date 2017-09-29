@@ -10,9 +10,10 @@ namespace Digipolis.Correlation
             if (setupAction == null)
                 setupAction = options => { };
 
-            services.Configure(setupAction);
+            services.Configure<CorrelationOptions>(setupAction);
             services.AddScoped<ICorrelationContext, CorrelationContext>();
-
+            
+            
             return services;
         }
     }
