@@ -21,7 +21,7 @@ To add the toolbox to a project, you add the package to the csproj project file:
 
 ```xml
   <ItemGroup>
-    <PackageReference Include="Digipolis.Correlation" Version="3.0.0" />
+    <PackageReference Include="Digipolis.Correlation" Version="3.1.0" />
   </ItemGroup>
 ``` 
 
@@ -29,7 +29,7 @@ or if your project still works with project.json :
 
 ``` json 
 "dependencies": {
-    "Digipolis.Correlation":  "3.0.0"
+    "Digipolis.Correlation":  "3.1.0"
  }
 ``` 
 
@@ -37,14 +37,14 @@ In Visual Studio you can also use the NuGet Package Manager to do this.
 
 ## Usage
 
-The correlation id is an identifier in the form of a guid that can be set on an http request by use of headers. The purpose is to track different requests that are related to each other when a request causes a chain of api calls.
-Together with the id a source property is available and can also be set.
+The correlation header contains an identifier in the form of a guid that can be set on an http request by use of headers. The purpose is to track different requests that are related to each other when a request causes a chain of api calls.
+Together with the id a sourceId, sourceName, instanceName, instanceId, userId and ipAddress property is available and can also be set.
 
-When the Correlation middelware is used an **ICorrelationContext** object can be injected into a class by the dependency injection framework.
+When the Correlation middelware is used an **ICorrelationContext** object becomes available and can be injected into a class by the dependency injection framework.
 When the correlation context is requested in classes that are created after the CorrelationId middelware has executed, the context will contain all values needed to use in subsequent api calls.
 
-If the incomming request contains the correlation headers, those values are set on the context object.
-If the incomming request does not contain the correlation headers a new correlation id will be created and the source will be set to the value passed in the **UseCorrelationId** method in the **Startup** class.
+If the incoming request contains the correlation headers, those values are set on the context object.
+If the incoming request does not contain the correlation headers a new correlation id will be created and the other properties will be set using the **IApplicationContext**..
 
 To use the correlationId middelware two steps are needed.
 
@@ -59,9 +59,7 @@ With custom options:
 ``` csharp
   service.AddCorrelation(options => 
   {
-     options.IdHeaderKey = "CustomIdHeaderKey",
-     options.SourceHeaderKey = "CustomSourceHeaderKey", 
-      
+     options.CorrelationHeaderRequired = false
   });
 ```
 
@@ -69,17 +67,15 @@ Following options can be set :
 
 Option              | Description                                                | Default
 ------------------ | ----------------------------------------------------------- | --------------------------------------
-IdHeaderKey              | The header key used for the correlation id value. | "D-Correlation-Id"
-SourceHeaderKey | The header key used for the correlation source value. | "D-Correlation-Source"  
+CorrelationHeaderRequired              | If set to true a Digipolis.Errors.ValidationException is thrown when the Dgp-Correlation header is missing | true
 
 Then add the middleware to the appication in the **Configure** method in the **Startup** class:
 
 ``` csharp
-  app.UseCorrelation("SoureValue");
+  app.UseCorrelation();
 ```
-The argument in the **UseCorreltationId** method sets the value to be used as the correlation source in the case the correlation id is generated in the application.
 
-Please note that the order in wich middleware is added is the order of execution of the middleware. Thus middleware in the pipeline previous to the correlationId middleware will not be able to use the correlationId values.
+Please note that the order in wich middleware is added is the order of execution of the middleware. Putting UseCorrelation() (with correlationheader required) before UseSwaggerUI() will make the SwaggerUI fail. UseCorrelation should come after UseSwaggerUI() and before UseMvc().
 
 ## HttpClientExtensions
 
