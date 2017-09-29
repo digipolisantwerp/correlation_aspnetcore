@@ -68,7 +68,7 @@ Following options can be set :
 Option              | Description                                                | Default
 ------------------ | ----------------------------------------------------------- | --------------------------------------
 CorrelationHeaderRequired              | If set to true a Digipolis.Errors.ValidationException is thrown when the Dgp-Correlation header is missing | false
-CorrelationHeaderNotRequiredRouteRegex  | Routes matching this regex will never require the correlationheader. By default /vx/status and /status will never require the correlation header. | ^(/v./(?i)(status)/\|/(?i)(status))
+CorrelationHeaderNotRequiredRouteRegex  | Routes matching this regex will never require the correlationheader. By default /vx/status and /status will never require the correlation header. | ^(/v./(?i)(status)/\|/(?i)(status)/)
 
 Then add the middleware to the appication in the **Configure** method in the **Startup** class:
 
