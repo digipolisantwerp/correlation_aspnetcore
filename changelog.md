@@ -1,6 +1,6 @@
 # Correlation Toolbox
 
-## 3.1.0
+## 4.0.0
 
 - Added CorrelationMiddleware that uses the correlationheader to fill the correlationcontext
 - Updated the model and headerkeys used for the correlationheader
