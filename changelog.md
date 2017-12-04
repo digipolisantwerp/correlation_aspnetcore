@@ -1,5 +1,9 @@
 # Correlation Toolbox
 
+## 4.1.0
+
+- Included correlation header value in correlationcontext class
+
 ## 4.0.0
 
 - Added CorrelationMiddleware that uses the correlationheader to fill the correlationcontext
