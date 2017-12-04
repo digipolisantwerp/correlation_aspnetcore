@@ -1,8 +1,8 @@
 # Correlation Toolbox
 
-## 4.1.0
+## 4.1.1
 
-- Included correlation header value in correlationcontext class
+- Include Dgp Header in interface
 
 ## 4.0.0
 
