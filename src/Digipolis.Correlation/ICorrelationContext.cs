@@ -12,5 +12,6 @@ namespace Digipolis.Correlation
         string InstanceName { get; }
         string UserId { get; }
         string IpAddress { get; }
+        string DgpHeader { get; }
     }
 }
