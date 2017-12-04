@@ -37,11 +37,7 @@ namespace Digipolis.Correlation
         [JsonProperty("ipAddress")]
         public string IpAddress { get; private set; }
 
-        [JsonProperty("jwtToken")]
-        [JsonIgnore]
-        public string JwtToken { get; private set; }
-
-        public bool TrySetValues(string id, string sourceId, string sourceName, string instanceId, string instanceName, string userId = null, string ipAddress = null, string jwtToken = null)
+        public bool TrySetValues(string id, string sourceId, string sourceName, string instanceId, string instanceName, string userId = null, string ipAddress = null)
         {
             if (String.IsNullOrWhiteSpace(Id))
             {
@@ -52,13 +48,6 @@ namespace Digipolis.Correlation
                 InstanceName = instanceName;
                 UserId = userId;
                 IpAddress = ipAddress;
-                if (jwtToken == null)
-                {
-                    var json = JsonConvert.SerializeObject(this);
-                    var jsonAsBytes = System.Text.Encoding.UTF8.GetBytes(json);
-                    jwtToken = Convert.ToBase64String(jsonAsBytes);
-                }
-                JwtToken = jwtToken;
                 return true;
             }
 

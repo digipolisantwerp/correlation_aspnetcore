@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using Digipolis.Correlation;
 using Digipolis.Correlation.UnitTests.Utilities;
 using Xunit;
-using System.Text;
-using Newtonsoft.Json.Linq;
 
 namespace Digipolis.Correlation.UnitTests.CorrelationId
 {
@@ -57,18 +55,6 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             Assert.Equal(instanceName, context.InstanceName);
             Assert.Equal(userId, context.UserId);
             Assert.Equal(ipAddress, context.IpAddress);
-
-            byte[] data = Convert.FromBase64String(context.JwtToken);
-            string json = Encoding.UTF8.GetString(data);
-            dynamic parsedHeader = JObject.Parse(json);
-
-            Assert.Equal(id, (string)parsedHeader.id);
-            Assert.Equal(sourceId, (string)parsedHeader.sourceId);
-            Assert.Equal(sourceName, (string)parsedHeader.sourceName);
-            Assert.Equal(instanceId, (string)parsedHeader.instanceId);
-            Assert.Equal(instanceName, (string)parsedHeader.instanceName);
-            Assert.Equal(userId, (string)parsedHeader.userId);
-            Assert.Equal(ipAddress, (string)parsedHeader.ipAddress);
         }
 
         [Fact]
@@ -95,18 +81,6 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             Assert.Equal(instanceName, context.InstanceName);
             Assert.Equal(userId, context.UserId);
             Assert.Equal(ipAddress, context.IpAddress);
-
-            byte[] data = Convert.FromBase64String(context.JwtToken);
-            string json = Encoding.UTF8.GetString(data);
-            dynamic parsedHeader = JObject.Parse(json);
-
-            Assert.Equal(id, (string)parsedHeader.id);
-            Assert.Equal(sourceId, (string)parsedHeader.sourceId);
-            Assert.Equal(sourceName, (string)parsedHeader.sourceName);
-            Assert.Equal(instanceId, (string)parsedHeader.instanceId);
-            Assert.Equal(instanceName, (string)parsedHeader.instanceName);
-            Assert.Equal(userId, (string)parsedHeader.userId);
-            Assert.Equal(ipAddress, (string)parsedHeader.ipAddress);
         }
     }
 }

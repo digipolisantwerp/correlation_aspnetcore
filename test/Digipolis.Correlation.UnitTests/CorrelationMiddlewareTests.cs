@@ -34,7 +34,6 @@ namespace Digipolis.Correlation.UnitTests
             Assert.Equal("testInstanceName", correlationContext.InstanceName);
             Assert.Equal("testUserId", correlationContext.UserId);
             Assert.Equal("123.123.123.123", correlationContext.IpAddress);
-            Assert.Equal(dgpheader, correlationContext.JwtToken);
         }
 
         [Fact]
