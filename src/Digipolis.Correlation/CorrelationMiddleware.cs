@@ -19,7 +19,7 @@ namespace Digipolis.Correlation
         private readonly RequestDelegate _next;
         private IApplicationContext _applicationContext;
 
-        public CorrelationMiddleware(RequestDelegate next,ILogger<CorrelationMiddleware> logger, IApplicationContext applicationContext)
+        public CorrelationMiddleware(RequestDelegate next, ILogger<CorrelationMiddleware> logger, IApplicationContext applicationContext)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next), $"{nameof(next)} cannot be null.");
             _logger = logger ?? throw new ArgumentNullException(nameof(logger), $"{nameof(logger)} cannot be null.");
@@ -36,7 +36,7 @@ namespace Digipolis.Correlation
             {
                 FillCorrelationContext(correlationHeader, correlationContext);
             }
-            else if (options.Value.CorrelationHeaderRequired && !Regex.IsMatch(context.Request.Path,options.Value.CorrelationHeaderNotRequiredRouteRegex))
+            else if (options.Value.CorrelationHeaderRequired && !Regex.IsMatch(context.Request.Path, options.Value.CorrelationHeaderNotRequiredRouteRegex))
             {
                 _logger.LogWarning("CorrelationHeader is required.");
                 var exception = new ValidationException("CorrelationHeader is required.", "REQCOR");
@@ -82,7 +82,8 @@ namespace Digipolis.Correlation
                     (string)parsedHeader.instanceId,
                     (string)parsedHeader.instanceName,
                     (string)parsedHeader.userId,
-                    (string)parsedHeader.ipAddress);
+                    (string)parsedHeader.ipAddress,
+                    correlationHeader);
             }
             catch (FormatException)
             {
