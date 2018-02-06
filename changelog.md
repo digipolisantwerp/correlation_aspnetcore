@@ -1,5 +1,8 @@
 # Correlation Toolbox
 
+## 5.0.0
+ - Upgrade dependencies for .Net Core 2.0
+
 ## 4.1.1
 
 - Include Dgp Header in interface
