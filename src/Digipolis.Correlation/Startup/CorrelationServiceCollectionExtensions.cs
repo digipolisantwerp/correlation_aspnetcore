@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Digipolis.Correlation
 {
@@ -11,9 +13,11 @@ namespace Digipolis.Correlation
                 setupAction = options => { };
 
             services.Configure<CorrelationOptions>(setupAction);
-            services.AddScoped<ICorrelationContext, CorrelationContext>();
-            
-            
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.TryAddTransient<ICorrelationService, CorrelationService>();
+            services.TryAddTransient<ICorrelationContextFormatter, CorrelationContextFormatter>();
+            services.TryAddTransient<CorrelationIdHandler>();
+
             return services;
         }
     }

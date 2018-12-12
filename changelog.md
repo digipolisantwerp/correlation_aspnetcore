@@ -1,5 +1,10 @@
 # Correlation Toolbox
 
+## 5.0.0
+
+- Upgrade to net standard 2.0
+- Usage of a service to get/create the correlationcontext
+
 ## 4.1.1
 
 - Include Dgp Header in interface
