@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Digipolis.Correlation;
-using Xunit;
+﻿using Xunit;
 
 namespace Digipolis.Correlation.UnitTests.CorrelationId
 {
@@ -14,7 +9,7 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
         {
             var options = new CorrelationOptions();
 
-            Assert.Equal(false, options.CorrelationHeaderRequired);
+            Assert.False(options.CorrelationHeaderRequired);
         }
     }
 }

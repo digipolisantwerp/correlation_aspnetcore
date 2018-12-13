@@ -1,28 +1,67 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Digipolis.Correlation;
 using Xunit;
 
 namespace Digipolis.Correlation.UnitTests.CorrelationIdServiceCollectionExtensions
 {
-    public class AddCorrelationIdTests
+    public class AddCorrelationTests
     {
         [Fact]
-        private void CorrelationContextIsRegistratedAsScoped()
+        private void CorrelationServiceIsRegistratedAsTransient()
         {
             var services = new ServiceCollection();
             services.AddCorrelation();
 
-            var registrations = services.Where(sd => sd.ServiceType == typeof(ICorrelationContext) && 
-                                                     sd.ImplementationType == typeof(CorrelationContext))
+            var registrations = services.Where(sd => sd.ServiceType == typeof(ICorrelationService) && 
+                                                     sd.ImplementationType == typeof(CorrelationService))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
-            Assert.Equal(ServiceLifetime.Scoped, registrations[0].Lifetime);
+            Assert.Single(registrations);
+            Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        private void CorrelationIdHandlerIsRegistratedAsTransient()
+        {
+            var services = new ServiceCollection();
+            services.AddCorrelation();
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(CorrelationIdHandler) &&
+                                                     sd.ImplementationType == typeof(CorrelationIdHandler))
+                                        .ToArray();
+
+            Assert.Single(registrations);
+            Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        private void CorrelationContextFormatterIsRegistratedAsTransient()
+        {
+            var services = new ServiceCollection();
+            services.AddCorrelation();
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(ICorrelationContextFormatter) &&
+                                                     sd.ImplementationType == typeof(CorrelationContextFormatter))
+                                        .ToArray();
+
+            Assert.Single(registrations);
+            Assert.Equal(ServiceLifetime.Transient, registrations[0].Lifetime);
+        }
+
+        [Fact]
+        private void HttpContextAccessorIsRegistratedAsSingleton()
+        {
+            var services = new ServiceCollection();
+            services.AddCorrelation();
+
+            var registrations = services.Where(sd => sd.ServiceType == typeof(IHttpContextAccessor) &&
+                                                     sd.ImplementationType == typeof(HttpContextAccessor))
+                                        .ToArray();
+
+            Assert.Single(registrations);
+            Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
 
         [Fact]
@@ -34,7 +73,7 @@ namespace Digipolis.Correlation.UnitTests.CorrelationIdServiceCollectionExtensio
             var registrations = services.Where(sd => sd.ServiceType == typeof(IConfigureOptions<CorrelationOptions>))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
     }

@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Digipolis.Correlation.UnitTests.Utilities
 {
+    //TODO: unused
     public class TestLogger<T> : ILogger<T>
     {
         private List<string> _loggedMessages;
