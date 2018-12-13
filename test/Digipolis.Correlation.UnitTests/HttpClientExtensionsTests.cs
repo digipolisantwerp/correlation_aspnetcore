@@ -43,7 +43,7 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             client.SetCorrelationValues(CreateServiceProvider(correlationContext, options));
 
             var result = client.DefaultRequestHeaders.Single(h => h.Key == CorrelationHeaders.HeaderKey);
-            Assert.NotNull(result);
+            Assert.NotEqual(default(KeyValuePair<string, IEnumerable<string>>), result);
             byte[] data = Convert.FromBase64String(result.Value.Single());
             string json = Encoding.UTF8.GetString(data);
 

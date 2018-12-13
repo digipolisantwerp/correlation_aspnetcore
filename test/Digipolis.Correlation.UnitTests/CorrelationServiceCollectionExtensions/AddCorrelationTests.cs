@@ -21,7 +21,7 @@ namespace Digipolis.Correlation.UnitTests.CorrelationIdServiceCollectionExtensio
                                                      sd.ImplementationType == typeof(CorrelationContext))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Scoped, registrations[0].Lifetime);
         }
 
@@ -34,7 +34,7 @@ namespace Digipolis.Correlation.UnitTests.CorrelationIdServiceCollectionExtensio
             var registrations = services.Where(sd => sd.ServiceType == typeof(IConfigureOptions<CorrelationOptions>))
                                         .ToArray();
 
-            Assert.Equal(1, registrations.Count());
+            Assert.Single(registrations);
             Assert.Equal(ServiceLifetime.Singleton, registrations[0].Lifetime);
         }
     }

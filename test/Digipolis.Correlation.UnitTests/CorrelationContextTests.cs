@@ -31,7 +31,7 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
 
             var context = new CorrelationContext(Options.Create(options));
 
-            Assert.Equal(options.CorrelationHeaderRequired, true);
+            Assert.True(options.CorrelationHeaderRequired);
         }
 
         [Fact]

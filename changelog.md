@@ -1,5 +1,13 @@
 # Correlation Toolbox
 
+##5.0.0
+
+- .NET Core 2.1 version.
+- Added AddCorrelationHeaderHandler, a DelegatingHandler, to add the correlation header to the HttpRequest's Headers.
+- Use of the HttpContext to pass the correlation header to the HttpClient/DelegatingHandler.
+- Switched to manual serialization of the correlation context to json with JsonTextWriter for performance.
+- Changed the HttpClientExtensions to use the header string on the correlation context in stead of creating the string ad hoc.
+
 ## 4.1.1
 
 - Include Dgp Header in interface

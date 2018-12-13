@@ -2,12 +2,16 @@
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
+using System.IO;
+using System.Text;
 
 namespace Digipolis.Correlation
 {
     public class CorrelationContext : ICorrelationContext
     {
         private readonly CorrelationOptions _options;
+
+        public CorrelationContext(){}
 
         public CorrelationContext(IOptions<CorrelationOptions> options)
         {
@@ -43,7 +47,7 @@ namespace Digipolis.Correlation
 
         public bool TrySetValues(string id, string sourceId, string sourceName, string instanceId, string instanceName, string userId = null, string ipAddress = null, string dgpHeader = null)
         {
-            if (String.IsNullOrWhiteSpace(Id))
+            if (string.IsNullOrWhiteSpace(Id))
             {
                 Id = id;
                 SourceId = sourceId;
@@ -52,10 +56,32 @@ namespace Digipolis.Correlation
                 InstanceName = instanceName;
                 UserId = userId;
                 IpAddress = ipAddress;
+
                 if (dgpHeader == null)
                 {
-                    var json = JsonConvert.SerializeObject(this);
-                    var jsonAsBytes = System.Text.Encoding.UTF8.GetBytes(json);
+                    StringBuilder sb = new StringBuilder();
+                    StringWriter sw = new StringWriter(sb);
+                    using (JsonWriter writer = new JsonTextWriter(sw))
+                    {
+                        writer.Formatting = Formatting.Indented;
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("id");
+                        writer.WriteValue(Id);
+                        writer.WritePropertyName("sourceId");
+                        writer.WriteValue(SourceId);
+                        writer.WritePropertyName("sourceName");
+                        writer.WriteValue(SourceName);
+                        writer.WritePropertyName("instanceId");
+                        writer.WriteValue(InstanceId);
+                        writer.WritePropertyName("instanceName");
+                        writer.WriteValue(InstanceName);
+                        writer.WritePropertyName("userId");
+                        writer.WriteValue(UserId);
+                        writer.WritePropertyName("ipAddress");
+                        writer.WriteValue(IpAddress);
+                    }
+                    var json = sb.ToString();
+                    var jsonAsBytes = Encoding.UTF8.GetBytes(json);
                     dgpHeader = Convert.ToBase64String(jsonAsBytes);
                 }
                 DgpHeader = dgpHeader;
