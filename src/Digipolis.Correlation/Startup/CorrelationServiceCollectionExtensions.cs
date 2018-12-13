@@ -12,7 +12,7 @@ namespace Digipolis.Correlation
 
             services.Configure<CorrelationOptions>(setupAction);
             services.AddScoped<ICorrelationContext, CorrelationContext>();
-            
+            services.AddTransient<AddCorrelationHeaderHandler>();
             
             return services;
         }
