@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -28,7 +27,7 @@ namespace Digipolis.Correlation
 
         public Task Invoke(HttpContext context, IOptions<CorrelationOptions> options)
         {
-            string correlation = String.Empty;
+            string correlation = string.Empty;
             var correlationContext = context.RequestServices.GetService(typeof(ICorrelationContext)) as CorrelationContext;
             var correlationHeader = context.Request.Headers[CorrelationHeaders.HeaderKey];
 
@@ -54,7 +53,7 @@ namespace Digipolis.Correlation
 
                 _logger.LogDebug("CorrelationHeader not found, created correlationId.");
             }
-
+            context.Items.Add("Dgp-Correlation", correlationContext.DgpHeader);
             return _next.Invoke(context);
         }
 
@@ -68,7 +67,7 @@ namespace Digipolis.Correlation
                 dynamic parsedHeader = JObject.Parse(json);
                 string correlationId = (string)parsedHeader.id;
 
-                if (String.IsNullOrEmpty(correlationId))
+                if (string.IsNullOrEmpty(correlationId))
                 {
                     _logger.LogWarning("Invalid correlationheader, id is required." + correlationHeader);
                     var exception = new ValidationException("Invalid correlationHeader, id is required.", "REQCOR");

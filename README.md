@@ -12,6 +12,8 @@ Toolbox for correlation id's.
 - [Usage](#usage)
 - [HttpClientExtensions](#httpclientextensions)
 - [Coupling with a Service Agent](#coupling-with-a-service-agent)
+- [Delegating to a handler](#delegating-to-a-handler)
+
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -111,3 +113,8 @@ You can supply an action that gets invoked by the service agent toolbox when the
         settings.Path = "api/";
     }, (serviceProvider, client) => client.SetCorrelationValues(serviceProvider));
 ```
+## Delegating to a handler
+
+When setting up the HttpClient for a service agent it is possible to setup the AddCorrelationHeaderHandler in  the **ConfigureServices** method of the **Startup** class.
+When using the the delegating handler it is not necessary to use the extension methods to setup the service agent.
+
