@@ -100,7 +100,7 @@ Important notice is that it is assumed that the http client is a transient or sc
 
 ## Coupling with a Service Agent
 
-### > v5.0.0
+### < v5.0.0
 
 When using the correlation in conjunction with a service agent (form Digipolis.ServiceAgent) it is possible setup the coupling in the **ConfigureServices** method of the **Startup** class.
 You can supply an action that gets invoked by the service agent toolbox when the service agent gets instantiated. On that action you can use the extension methods to setup the correlation usage.
@@ -114,7 +114,7 @@ You can supply an action that gets invoked by the service agent toolbox when the
     }, (serviceProvider, client) => client.SetCorrelationValues(serviceProvider));
 ```
 
-### <= v5.0.0
+### >= v5.0.0
 
 Starting from .NET Core v2.1, it is recommended to register HttpClient in serviceagents as a singleton using the HttpClientFactory. This package contains a DelegatingHandler which can be used to add the correlationheader to each outgoing request.
 
