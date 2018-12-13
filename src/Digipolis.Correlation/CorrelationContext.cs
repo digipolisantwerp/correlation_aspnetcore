@@ -10,9 +10,7 @@ namespace Digipolis.Correlation
     public class CorrelationContext : ICorrelationContext
     {
         private readonly CorrelationOptions _options;
-
-        public CorrelationContext(){}
-
+        
         public CorrelationContext(IOptions<CorrelationOptions> options)
         {
             if (options.Value == null) throw new ArgumentNullException(nameof(CorrelationOptions), $"{nameof(CorrelationOptions)} cannot be null.");
