@@ -6,17 +6,17 @@ namespace Digipolis.Correlation
 {
     public class CorrelationIdHandler : DelegatingHandler
     {
-        private readonly string _correlationHeader;
+
+        private readonly ICorrelationService _correlationService;
 
         public CorrelationIdHandler(ICorrelationService correlationService)
         {
-            if (correlationService == null) throw new System.ArgumentNullException(nameof(correlationService));
-            _correlationHeader = correlationService.GetContext().DgpHeader;
+            _correlationService = correlationService ?? throw new System.ArgumentNullException(nameof(correlationService));
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            request.Headers.TryAddWithoutValidation(CorrelationHeader.Key, _correlationHeader);
+            request.Headers.TryAddWithoutValidation(CorrelationHeader.Key, _correlationService.GetContext().DgpHeader);
             return await base.SendAsync(request, cancellationToken);
         }
     }
