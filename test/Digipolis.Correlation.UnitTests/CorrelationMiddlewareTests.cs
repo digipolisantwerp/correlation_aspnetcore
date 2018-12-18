@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace Digipolis.Correlation.UnitTests
@@ -13,27 +11,85 @@ namespace Digipolis.Correlation.UnitTests
     public class CorrelationMiddlewareTests
     {
         [Fact]
-        public void FillCorrelationContextSetsCorrelationContextPropertiesWithBase64EncodedCorrelationHeader()
+        public void ThrowExceptionWhenRequestDelegateIsNull()
         {
-            //Arrange
+            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
+            Assert.Throws<ArgumentNullException>(() => new CorrelationMiddleware(null, 
+                logger: loggerMock.Object, 
+                correlationService: correlationService.Object, 
+                options: options, 
+                correlationContextFormatter: correlationFormatter.Object));
+        }
+
+        [Fact]
+        public void ThrowExceptionWhenLoggerIsNull()
+        {
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
+            Assert.Throws<ArgumentNullException>(() => new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, 
+                logger:null, 
+                correlationService: correlationService.Object, 
+                options: options, 
+                correlationContextFormatter: correlationFormatter.Object));
+        }
+
+
+        [Fact]
+        public void ThrowExceptionWhenCorrelationServiceIsNull()
+        {
+            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
+            Assert.Throws<ArgumentNullException>(() => new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, 
+                logger: loggerMock.Object, 
+                correlationService: null, 
+                options: options, 
+                correlationContextFormatter: correlationFormatter.Object));
+        }
+
+        [Fact]
+        public void ThrowExceptionWhenOptionsIsNull()
+        {
+            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            Assert.Throws<ArgumentNullException>(() => new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); },
+                logger: loggerMock.Object,
+                correlationService: correlationService.Object,
+                options: null,
+                correlationContextFormatter: correlationFormatter.Object));
+        }
+
+        [Fact]
+        public void ThrowExceptionWhenCorrelationFormatterIsNull()
+        {
+            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
+            Assert.Throws<ArgumentNullException>(() => new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); },
+                logger: loggerMock.Object,
+                correlationService: correlationService.Object,
+                options: options,
+                correlationContextFormatter: null));
+        }
+
+        [Fact]
+        public void DontThrowExceptionWhenNoneIsNull()
+        {
             var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
             var applicationContext = new Moq.Mock<IApplicationContext>();
-            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, applicationContext: applicationContext.Object);
-            var dgpheader = "eyJpZCI6ImlkNDU2NDIzMTI0IiwNCiJzb3VyY2VJZCI6InRlc3Rzb3VyY2VJZCIsDQoic291cmNlTmFtZSI6InRlc3RTb3VyY2VOYW1lIiwNCiJpbnN0YW5jZUlkIjoidGVzdEluc3RhbmNlSWQiLA0KImluc3RhbmNlTmFtZSI6InRlc3RJbnN0YW5jZU5hbWUiLA0KInVzZXJJZCI6InRlc3RVc2VySWQiLA0KImlwQWRkcmVzcyI6IjEyMy4xMjMuMTIzLjEyMyJ9";
-            var options = Options.Create<CorrelationOptions>(new CorrelationOptions());
-            var correlationContext = new CorrelationContext(options);
-
-            //Act
-            middleware.FillCorrelationContext(dgpheader, correlationContext);
-
-            //Assert
-            Assert.Equal("id456423124",correlationContext.Id);
-            Assert.Equal("testsourceId", correlationContext.SourceId);
-            Assert.Equal("testSourceName", correlationContext.SourceName);
-            Assert.Equal("testInstanceId", correlationContext.InstanceId);
-            Assert.Equal("testInstanceName", correlationContext.InstanceName);
-            Assert.Equal("testUserId", correlationContext.UserId);
-            Assert.Equal("123.123.123.123", correlationContext.IpAddress);
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
+            Assert.NotNull(new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, 
+                logger: loggerMock.Object, 
+                correlationService: correlationService.Object, 
+                options: options, 
+                correlationContextFormatter: correlationFormatter.Object));
         }
 
         [Fact]
@@ -42,14 +98,105 @@ namespace Digipolis.Correlation.UnitTests
             //Arrange
             var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
             var applicationContext = new Moq.Mock<IApplicationContext>();
-            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, applicationContext: applicationContext.Object);
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
             var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
-            var correlationContext = new CorrelationContext(options);
-            var httpContext = new DefaultHttpContext();
-            httpContext.RequestServices = new Moq.Mock<IServiceProvider>().Object;
+            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, correlationService: correlationService.Object, options: options, correlationContextFormatter: correlationFormatter.Object);
+            var correlationContext = new CorrelationContext();
+            var httpContext = new DefaultHttpContext
+            {
+                RequestServices = new Moq.Mock<IServiceProvider>().Object
+            };
 
             //Act
-            Assert.ThrowsAsync<ValidationException>(() => middleware.Invoke(httpContext, options));
+            Assert.ThrowsAsync<ValidationException>(() => middleware.Invoke(httpContext));
+        }
+
+        [Fact]
+        public void ThrowsNoValidationExceptionIfDgpHeaderNotRequiredAndMissing()
+        {
+            //Arrange
+            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
+            var applicationContext = new Moq.Mock<IApplicationContext>();
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = false });
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, correlationService: correlationService.Object, options: options, correlationContextFormatter: correlationFormatter.Object);
+            var httpContext = new DefaultHttpContext
+            {
+                RequestServices = new Moq.Mock<IServiceProvider>().Object
+            };
+
+            var serviceProvider = new Moq.Mock<IServiceProvider>();
+
+            //Act
+            middleware.Invoke(httpContext);
+        }
+
+        [Fact]
+        public void ThrowsValidationExceptionIfDgpHeaderRequiredAndInvalidIdInHeader()
+        {
+            //Arrange
+            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
+            var applicationContext = new Moq.Mock<IApplicationContext>();
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, correlationService: correlationService.Object, options: options, correlationContextFormatter: correlationFormatter.Object);
+            var httpContext = new DefaultHttpContext
+            {
+                RequestServices = new Moq.Mock<IServiceProvider>().Object
+            };
+            httpContext.Request.Headers.Add(CorrelationHeader.Key, "eyJpZCI6bnVsbCwKInNvdXJjZUlkIjoiMSIsCiJzb3VyY2VOYW1lIjoidGVzdG5hbWUiLAoiaW5zdGFuY2VJZCI6IjIiLAoiaW5zdGFuY2VOYW1lIjoidGVzdGluc3RhbmNlIiwKdXNlcklkIjoidW5rb3dudXNlciIsCiJpcEFkZHJlc3MiOiIxMjMuMTIzLjEyMy4xMjMifQ==");
+
+            var serviceProvider = new Moq.Mock<IServiceProvider>();
+
+            //Act
+            middleware.Invoke(httpContext);
+        }
+
+        [Fact]
+        public void ThrowsValidationExceptionIfDgpHeaderRequiredAndInvalidHeader()
+        {
+            //Arrange
+            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
+            var applicationContext = new Moq.Mock<IApplicationContext>();
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, correlationService: correlationService.Object, options: options, correlationContextFormatter: correlationFormatter.Object);
+            var httpContext = new DefaultHttpContext
+            {
+                RequestServices = new Moq.Mock<IServiceProvider>().Object
+            };
+            httpContext.Request.Headers.Add(CorrelationHeader.Key, "eyJibGFibGEiOiIxIiwKImJsYWJsYWJsYSI6InRlc3RuYW1lIn0");
+
+            var serviceProvider = new Moq.Mock<IServiceProvider>();
+
+            //Act
+            middleware.Invoke(httpContext);
+        }
+
+        [Fact]
+        public void ThrowsNoValidationExceptionIfDgpHeaderRequiredAndHeaderIsValid()
+        {
+            //Arrange
+            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
+            var applicationContext = new Moq.Mock<IApplicationContext>();
+            var correlationService = new Moq.Mock<ICorrelationService>();
+            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, correlationService: correlationService.Object, options: options, correlationContextFormatter: correlationFormatter.Object);
+            var httpContext = new DefaultHttpContext
+            {
+                RequestServices = new Moq.Mock<IServiceProvider>().Object
+            };
+            httpContext.Request.Headers.Add(CorrelationHeader.Key, "eyJpZCI6ImNvcnJlbGF0aW9uaWQiLAoic291cmNlSWQiOiIxIiwKInNvdXJjZU5hbWUiOiJ0ZXN0bmFtZSIsCiJpbnN0YW5jZUlkIjoiMiIsCiJpbnN0YW5jZU5hbWUiOiJ0ZXN0aW5zdGFuY2UiLAp1c2VySWQiOiJ1bmtvd251c2VyIiwKImlwQWRkcmVzcyI6IjEyMy4xMjMuMTIzLjEyMyJ9");
+
+            var serviceProvider = new Moq.Mock<IServiceProvider>();
+
+            //Act
+            middleware.Invoke(httpContext);
         }
 
         [Fact]
@@ -58,44 +205,20 @@ namespace Digipolis.Correlation.UnitTests
             //Arrange
             var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
             var applicationContext = new Moq.Mock<IApplicationContext>();
-            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, applicationContext: applicationContext.Object);
+            var correlationService = new Moq.Mock<ICorrelationService>();
             var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = true });
-            var correlationContext = new CorrelationContext(options);
-            var httpContext = new DefaultHttpContext();
-            httpContext.RequestServices = new Moq.Mock<IServiceProvider>().Object;
+            var correlationFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, correlationService: correlationService.Object, options: options, correlationContextFormatter: correlationFormatter.Object);
+            var httpContext = new DefaultHttpContext
+            {
+                RequestServices = new Moq.Mock<IServiceProvider>().Object
+            };
             httpContext.Request.Path = "/v2/status/ping";
 
             var serviceProvider = new Moq.Mock<IServiceProvider>();
-            serviceProvider.Setup((x) => x.GetService(typeof(ICorrelationContext))).Returns(correlationContext);
-            httpContext.RequestServices = serviceProvider.Object;
 
             //Act
-            middleware.Invoke(httpContext, options);
+            middleware.Invoke(httpContext);
         }
-
-        [Fact]
-        public void FillsCorrelationContextWithApplicationContextIfHeaderNotRequiredAndNotProvided()
-        {
-            //Arrange
-            var loggerMock = new Moq.Mock<ILogger<CorrelationMiddleware>>();
-            var applicationContext = new ApplicationContext("appId", "appName");
-
-            var middleware = new CorrelationMiddleware(next: async (innerHttpContext) => { await innerHttpContext.Response.WriteAsync("test response body"); }, logger: loggerMock.Object, applicationContext: applicationContext);
-            var options = Options.Create<CorrelationOptions>(new CorrelationOptions() { CorrelationHeaderRequired = false });
-            var correlationContext = new CorrelationContext(options);
-            var httpContext = new DefaultHttpContext();
-
-            var serviceProvider = new Moq.Mock<IServiceProvider>();
-            serviceProvider.Setup((x) => x.GetService(typeof(ICorrelationContext))).Returns(correlationContext);
-
-            httpContext.RequestServices = serviceProvider.Object;
-
-            //Act
-            middleware.Invoke(httpContext, options);
-
-            //Assert
-            Assert.Equal("appId", correlationContext.SourceId);
-        }
-
     }
 }
