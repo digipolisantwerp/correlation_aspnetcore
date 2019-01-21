@@ -1,5 +1,9 @@
 # Correlation Toolbox
 
+## 5.0.2
+
+- Casing bugfix
+
 ## 5.0.0
 
 - Upgrade to net standard 2.0
