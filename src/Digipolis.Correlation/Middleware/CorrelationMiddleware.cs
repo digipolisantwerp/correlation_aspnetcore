@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -32,12 +33,13 @@ namespace Digipolis.Correlation
 
         public Task Invoke(HttpContext context)
         {
-            var correlationHeader = context.Request.Headers[CorrelationHeader.Key];
+            var correlationHeader = context.Request?.Headers?.FirstOrDefault(x=>x.Key.ToLowerInvariant() == CorrelationHeader.Key.ToLowerInvariant()).Value;
+            var correlationHeaderValue = !correlationHeader.HasValue || !correlationHeader.Value.Any() ? String.Empty : correlationHeader.Value.FirstOrDefault();
 
-            if (_options.Value.CorrelationHeaderRequired &&
+                if (_options.Value.CorrelationHeaderRequired &&
                 !Regex.IsMatch(context.Request.Path, _options.Value.CorrelationHeaderNotRequiredRouteRegex))
             {
-                if (StringValues.IsNullOrEmpty(correlationHeader))
+                if (StringValues.IsNullOrEmpty(correlationHeaderValue))
                 {
                     _logger.LogWarning("CorrelationHeader is required.");
                     var exception = new ValidationException("CorrelationHeader is required.", ErrorCode.RequiredCorrelationHeader);
@@ -46,7 +48,7 @@ namespace Digipolis.Correlation
                 }
                 else
                 {
-                    _correlationContextFormatter.ValidateAndSetPropertiesFromDgpHeader(correlationHeader);
+                    _correlationContextFormatter.ValidateAndSetPropertiesFromDgpHeader(correlationHeaderValue);
                 }
             }
 

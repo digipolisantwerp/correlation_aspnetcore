@@ -23,7 +23,7 @@ namespace Digipolis.Correlation
         public CorrelationContext GetContext()
         {
             var request = _httpContextAccessor?.HttpContext?.Request;
-            var headerValues = request?.Headers?.FirstOrDefault(x => x.Key == CorrelationHeader.Key).Value;
+            var headerValues = request?.Headers?.FirstOrDefault(x => x.Key.ToLowerInvariant() == CorrelationHeader.Key.ToLowerInvariant()).Value;
 
             if (request == null)
                 _logger.LogDebug($"{GetType().Name}.CorrelationContext - No incoming request");
