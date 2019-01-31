@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,18 +8,19 @@ namespace Digipolis.Correlation
 {
     public class CorrelationIdHandler : DelegatingHandler
     {
-        private readonly string _correlationHeader;
+        private readonly ICorrelationService _correlationService;
 
         public CorrelationIdHandler(ICorrelationService correlationService)
         {
-            if (correlationService == null) throw new System.ArgumentNullException(nameof(correlationService));
-            _correlationHeader = correlationService.GetContext().DgpHeader;
+            _correlationService = correlationService ?? throw new System.ArgumentNullException(nameof(correlationService));
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (!request.Headers.Any(x => x.Key.ToLowerInvariant() == CorrelationHeader.Key.ToLowerInvariant()))
-                request.Headers.Add(CorrelationHeader.Key, _correlationHeader);
+            var correlationHeader = request?.Headers?.FirstOrDefault(x => x.Key.ToLowerInvariant() == CorrelationHeader.Key.ToLowerInvariant());
+            if (!String.IsNullOrWhiteSpace(correlationHeader?.Key))
+                request.Headers.Remove(correlationHeader.Value.Key);
+            request.Headers.Add(CorrelationHeader.Key, _correlationService.GetContext().DgpHeader);
             return await base.SendAsync(request, cancellationToken);
         }
     }
