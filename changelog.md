@@ -1,5 +1,9 @@
 # Correlation Toolbox
 
+## 5.1.0
+
+- Fixed broken correlationidhandler
+
 ## 5.0.2
 
 - Casing bugfix
