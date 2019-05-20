@@ -1,5 +1,9 @@
 # Correlation Toolbox
 
+## 5.2.0
+
+- Generate dgpheader if not present and header not required
+
 ## 5.1.0
 
 - Fixed broken correlationidhandler
