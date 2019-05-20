@@ -33,11 +33,11 @@ namespace Digipolis.Correlation
 
         public Task Invoke(HttpContext context)
         {
-            var correlationHeader = context.Request?.Headers?.FirstOrDefault(x=>x.Key.ToLowerInvariant() == CorrelationHeader.Key.ToLowerInvariant()).Value;
+            var correlationHeader = context.Request?.Headers?.FirstOrDefault(x => x.Key.ToLowerInvariant() == CorrelationHeader.Key.ToLowerInvariant()).Value;
             var correlationHeaderValue = !correlationHeader.HasValue || !correlationHeader.Value.Any() ? String.Empty : correlationHeader.Value.FirstOrDefault();
 
-                if (_options.Value.CorrelationHeaderRequired &&
-                !Regex.IsMatch(context.Request.Path, _options.Value.CorrelationHeaderNotRequiredRouteRegex))
+            if (_options.Value.CorrelationHeaderRequired &&
+            !Regex.IsMatch(context.Request.Path, _options.Value.CorrelationHeaderNotRequiredRouteRegex))
             {
                 if (StringValues.IsNullOrEmpty(correlationHeaderValue))
                 {
@@ -46,11 +46,12 @@ namespace Digipolis.Correlation
                     exception.AddMessage("CorrelationHeader", "CorrelationHeader is required.");
                     throw exception;
                 }
-                else
-                {
-                    _correlationContextFormatter.ValidateAndSetPropertiesFromDgpHeader(correlationHeaderValue);
-                }
             }
+            if (string.IsNullOrWhiteSpace(correlationHeaderValue))
+            {
+                correlationHeaderValue = _correlationService.GetContext().DgpHeader;
+            }
+            _correlationContextFormatter.ValidateAndSetPropertiesFromDgpHeader(correlationHeaderValue);
 
             return _next.Invoke(context);
         }
