@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Digipolis.Correlation.Helpers;
 
 namespace Digipolis.Correlation
 {
@@ -17,6 +18,7 @@ namespace Digipolis.Correlation
             services.TryAddTransient<ICorrelationService, CorrelationService>();
             services.TryAddTransient<ICorrelationContextFormatter, CorrelationContextFormatter>();
             services.TryAddTransient<CorrelationIdHandler>();
+            services.TryAddScoped<IScopedCorrelationContext, ScopedCorrelationContext>();
 
             return services;
         }
