@@ -1,4 +1,5 @@
 ﻿using Digipolis.ApplicationServices;
+using Digipolis.Correlation.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,12 +13,15 @@ namespace Digipolis.Correlation
         private readonly IApplicationContext _applicationContext;
         private readonly ILogger<CorrelationService> _logger;
         private readonly ICorrelationContextFormatter _correlationContextFormatter;
-        public CorrelationService(IHttpContextAccessor httpContextAccessor, IApplicationContext applicationContext, ILogger<CorrelationService> logger, ICorrelationContextFormatter correlationContextFormatter)
+        private readonly IScopedCorrelationContext _correlationContext;
+
+        public CorrelationService(IHttpContextAccessor httpContextAccessor, IApplicationContext applicationContext, ILogger<CorrelationService> logger, ICorrelationContextFormatter correlationContextFormatter, IScopedCorrelationContext correlationContext)
         {
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _applicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _correlationContextFormatter = correlationContextFormatter ?? throw new ArgumentNullException(nameof(correlationContextFormatter));
+            _correlationContext = correlationContext ?? throw new ArgumentNullException(nameof(correlationContext));
         }
 
         public CorrelationContext GetContext()
@@ -38,20 +42,23 @@ namespace Digipolis.Correlation
                 return context;
             }
 
-            var correlationContext = new CorrelationContext
+            if (_correlationContext.Context == null)
             {
-                Id = Guid.NewGuid().ToString(),
-                SourceId = _applicationContext.ApplicationId,
-                SourceName = _applicationContext.ApplicationName,
-                InstanceId = _applicationContext.InstanceId,
-                InstanceName = _applicationContext.InstanceName,
-                IpAddress = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? String.Empty
-            };
-            correlationContext.SetDgpHeader();
+                _correlationContext.Context = new CorrelationContext
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    SourceId = _applicationContext.ApplicationId,
+                    SourceName = _applicationContext.ApplicationName,
+                    InstanceId = _applicationContext.InstanceId,
+                    InstanceName = _applicationContext.InstanceName,
+                    IpAddress = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString() ?? String.Empty
+                };
+                _correlationContext.Context.SetDgpHeader();
 
-            _logger.LogDebug($"CorrelationHeader not found, created correlationId with header value '{correlationContext.DgpHeader}'");
+                _logger.LogDebug($"CorrelationHeader not found, created correlationId with header value '{_correlationContext.Context.DgpHeader}'");
+            }
 
-            return correlationContext;
+            return _correlationContext.Context;
 
         }
     }
