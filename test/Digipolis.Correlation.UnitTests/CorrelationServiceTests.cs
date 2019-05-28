@@ -1,4 +1,5 @@
 ﻿using Digipolis.ApplicationServices;
+using Digipolis.Correlation.Helpers;
 using Digipolis.Correlation.UnitTests.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,8 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var applicationContext = new Moq.Mock<IApplicationContext>().Object;
             var logger = new Moq.Mock<ILogger<CorrelationService>>().Object;
             var correlationContextFormatter = new Moq.Mock<ICorrelationContextFormatter>().Object;
-            Assert.Throws<ArgumentNullException>(() => new CorrelationService(null, applicationContext, logger, correlationContextFormatter));
+            var correlationContext = new Moq.Mock<IScopedCorrelationContext>().Object;
+            Assert.Throws<ArgumentNullException>(() => new CorrelationService(null, applicationContext, logger, correlationContextFormatter, correlationContext));
         }
 
         [Fact]
@@ -25,7 +27,8 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var httpContextAccessor = new Moq.Mock<IHttpContextAccessor>().Object;
             var logger = new Moq.Mock<ILogger<CorrelationService>>().Object;
             var correlationContextFormatter = new Moq.Mock<ICorrelationContextFormatter>().Object;
-            Assert.Throws<ArgumentNullException>(() => new CorrelationService(httpContextAccessor, null, logger, correlationContextFormatter));
+            var correlationContext = new Moq.Mock<IScopedCorrelationContext>().Object;
+            Assert.Throws<ArgumentNullException>(() => new CorrelationService(httpContextAccessor, null, logger, correlationContextFormatter, correlationContext));
         }
 
         [Fact]
@@ -34,7 +37,8 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var httpContextAccessor = new Moq.Mock<IHttpContextAccessor>().Object;
             var applicationContext = new Moq.Mock<IApplicationContext>().Object;
             var correlationContextFormatter = new Moq.Mock<ICorrelationContextFormatter>().Object;
-            Assert.Throws<ArgumentNullException>(() => new CorrelationService(httpContextAccessor, applicationContext, null, correlationContextFormatter));
+            var correlationContext = new Moq.Mock<IScopedCorrelationContext>().Object;
+            Assert.Throws<ArgumentNullException>(() => new CorrelationService(httpContextAccessor, applicationContext, null, correlationContextFormatter, correlationContext));
         }
 
         [Fact]
@@ -43,7 +47,8 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var httpContextAccessor = new Moq.Mock<IHttpContextAccessor>().Object;
             var applicationContext = new Moq.Mock<IApplicationContext>().Object;
             var logger = new Moq.Mock<ILogger<CorrelationService>>().Object;
-            Assert.Throws<ArgumentNullException>(() => new CorrelationService(httpContextAccessor, applicationContext, logger, null));
+            var correlationContext = new Moq.Mock<IScopedCorrelationContext>().Object;
+            Assert.Throws<ArgumentNullException>(() => new CorrelationService(httpContextAccessor, applicationContext, logger, null, correlationContext));
         }
 
         [Fact]
@@ -53,7 +58,8 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var applicationContext = new Moq.Mock<IApplicationContext>().Object;
             var logger = new Moq.Mock<ILogger<CorrelationService>>().Object;
             var correlationContextFormatter = new Moq.Mock<ICorrelationContextFormatter>().Object;
-            Assert.NotNull(new CorrelationService(httpContextAccessor, applicationContext, logger, correlationContextFormatter));
+            var correlationContext = new Moq.Mock<IScopedCorrelationContext>().Object;
+            Assert.NotNull(new CorrelationService(httpContextAccessor, applicationContext, logger, correlationContextFormatter, correlationContext));
         }
 
         [Fact]
@@ -69,8 +75,10 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var applicationContext = new Moq.Mock<IApplicationContext>().Object;
             var logger = new TestLogger<CorrelationService>(new List<string>());
             var correlationContextFormatter = new Moq.Mock<ICorrelationContextFormatter>();
+            var correlationContext = new Moq.Mock<IScopedCorrelationContext>();
+            correlationContext.SetupProperty<CorrelationContext>(x => x.Context, null);
 
-            var service = new CorrelationService(httpContextAccessor.Object, applicationContext, logger, correlationContextFormatter.Object);
+            var service = new CorrelationService(httpContextAccessor.Object, applicationContext, logger, correlationContextFormatter.Object, correlationContext.Object);
             var context = service.GetContext();
 
             Assert.NotNull(context.DgpHeader);
@@ -93,9 +101,9 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var logger = new Moq.Mock<ILogger<CorrelationService>>().Object;
             var correlationContextFormatter = new Moq.Mock<ICorrelationContextFormatter>();
             correlationContextFormatter.Setup(x => x.ValidateAndSetPropertiesFromDgpHeader(header)).Returns(new CorrelationContext { DgpHeader = header });
-               
-            
-            var service = new CorrelationService(httpContextAccessor.Object, applicationContext, logger, correlationContextFormatter.Object);
+            var correlationContext = new Moq.Mock<IScopedCorrelationContext>().Object;
+
+            var service = new CorrelationService(httpContextAccessor.Object, applicationContext, logger, correlationContextFormatter.Object, correlationContext);
             var context = service.GetContext();
 
 
