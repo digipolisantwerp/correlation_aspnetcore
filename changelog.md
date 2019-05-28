@@ -1,5 +1,9 @@
 # Correlation Toolbox
 
+## 5.3.0
+
+- Invalid correlation headers will be overwritten by a default header before logging and throwing an exception to stop an infinite loop 
+
 ## 5.2.0
 
 - Generate dgpheader if not present and header not required

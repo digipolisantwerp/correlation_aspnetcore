@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Toolbox for correlation id's..</Description>
-    <VersionPrefix>5.2.0</VersionPrefix>
+    <VersionPrefix>5.3.0</VersionPrefix>
     <Authors>Digipolis.be</Authors>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Digipolis.Correlation</AssemblyName>
