@@ -34,7 +34,7 @@ namespace Digipolis.Correlation
                 context.DgpHeader = header;
                 return context;
             }
-            catch (FormatException)
+            catch (Exception)
             {
                 ReplaceInvalidContextByDefault();
                 _logger.LogError($"Invalid correlationheader '{header}'");

@@ -1,5 +1,10 @@
 # Correlation Toolbox
 
+## 5.3.1
+
+- Bugfix: invalid correlation headers will be overwritten by a default header before logging and throwing an exception to stop an infinite loop. Now catching even more exceptions
+
+
 ## 5.3.0
 
 - Invalid correlation headers will be overwritten by a default header before logging and throwing an exception to stop an infinite loop 
