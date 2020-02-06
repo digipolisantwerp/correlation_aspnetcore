@@ -92,7 +92,7 @@ namespace Digipolis.Correlation.UnitTests.CorrelationId
             var contextFormatter = new CorrelationContextFormatter(new TestLogger<CorrelationContextFormatter>(new List<string>()), httpContextAccessor.Object);
 
             var ex = Assert.Throws<ValidationException>(() => contextFormatter.ValidateAndSetPropertiesFromDgpHeader(context.DgpHeader));
-            Assert.Contains("Invalid correlationheader, id is required", ex.Message);
+            Assert.Contains("Invalid correlationheader", ex.Message);
 
             Assert.Equal(httpContextAccessor.Object.HttpContext.Request.Headers[CorrelationHeader.Key], CorrelationHeader.Default);
 
