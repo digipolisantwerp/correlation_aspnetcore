@@ -1,5 +1,9 @@
 # Correlation Toolbox
 
+## 6.0.0
+
+- Upgrade to net standard 2.1
+
 ## 5.3.1
 
 - Bugfix: invalid correlation headers will be overwritten by a default header before logging and throwing an exception to stop an infinite loop. Now catching even more exceptions

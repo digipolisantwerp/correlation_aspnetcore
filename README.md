@@ -21,7 +21,7 @@ To add the toolbox to a project, you add the package to the csproj project file:
 
 ```xml
   <ItemGroup>
-    <PackageReference Include="Digipolis.Correlation" Version="5.0.0" />
+    <PackageReference Include="Digipolis.Correlation" Version="6.0.0" />
   </ItemGroup>
 ``` 
 
@@ -29,7 +29,7 @@ or if your project still works with project.json :
 
 ``` json 
 "dependencies": {
-    "Digipolis.Correlation":  "4.1.1"
+    "Digipolis.Correlation":  "6.0.0"
  }
 ``` 
 
