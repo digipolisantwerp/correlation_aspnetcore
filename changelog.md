@@ -1,5 +1,9 @@
 # Correlation Toolbox
 
+## 6.0.1
+
+- Downgpgrade to net standard 2.0 for backwards compatibility
+
 ## 6.0.0
 
 - Upgrade to net standard 2.1
